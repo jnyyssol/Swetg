@@ -43,12 +43,12 @@
       margin-top: 1rem; 
     }
     li { 
-      margin: 1rem 0; 
-      font-size: 1.5rem; 
-      padding: 12px;
+      margin: 0.4rem 0; 
+      font-size: 1.1rem; 
+      padding: 6px 10px;
       background: #f8f9fa;
-      border-radius: 5px;
-      border-left: 4px solid #007bff;
+      border-radius: 4px;
+      border-left: 3px solid #007bff;
     }
     .footer {
       margin-top: 2rem;
@@ -60,12 +60,69 @@
       font-size: 0.9rem;
       color: #666;
     }
+    .difficulty-control {
+      margin: 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      justify-content: center;
+    }
+    .difficulty-label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #666;
+    }
+    .toggle-container {
+      display: inline-flex;
+      background: #e9ecef;
+      border-radius: 12px;
+      padding: 2px;
+      position: relative;
+      border: 1px solid #dee2e6;
+      height: 24px;
+    }
+    .toggle-option {
+      padding: 0 10px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #666;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      min-width: 45px;
+      text-align: center;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .toggle-option.active {
+      background: white;
+      color: #007bff;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      font-weight: 600;
+    }
+    .toggle-option:hover:not(.active) {
+      background: rgba(255,255,255,0.5);
+      color: #333;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Software Engineering term generator</h1>
-    <div class="stats"><span id="term-count"> </span> terms scraped from Wikipedia and weighted with nltk with some manual curation.</span></div>
+    <div class="stats"><span id="term-count"> </span> terms.</span></div>
+    
+    <div class="difficulty-control">
+      <span class="difficulty-label">Difficulty:</span>
+      <div class="toggle-container">
+        <button class="toggle-option active" id="easyMode" onclick="setDifficulty('easy')">Easy</button>
+        <button class="toggle-option" id="hardMode" onclick="setDifficulty('hard')">Hard</button>
+      </div>
+    </div>
+    
     <button onclick="fetchWords()">Reroll Words</button>
     <ul id="word-list"></ul>
       
@@ -107,7 +164,7 @@
   {
     "term": "Algorithm",
     "topic": "Programming languages",
-    "score": 100
+    "score": 120
   },
   {
     "term": "Algorithm design",
@@ -137,7 +194,7 @@
   {
     "term": "ArXiv",
     "topic": "Programming languages",
-    "score": 90
+    "score": 110
   },
   {
     "term": "Array",
@@ -147,7 +204,7 @@
   {
     "term": "Artificial intelligence",
     "topic": "Programming languages",
-    "score": 165
+    "score": 145
   },
   {
     "term": "Assembly language",
@@ -172,7 +229,7 @@
   {
     "term": "BASIC",
     "topic": "Programming languages",
-    "score": 171
+    "score": 88
   },
   {
     "term": "Batch processing",
@@ -222,7 +279,7 @@
   {
     "term": "C Sharp",
     "topic": "Programming languages",
-    "score": 193
+    "score": 23
   },
   {
     "term": "Carbon",
@@ -232,7 +289,7 @@
   {
     "term": "Case statement",
     "topic": "Programming languages",
-    "score": 303
+    "score": 30
   },
   {
     "term": "Character",
@@ -247,7 +304,7 @@
   {
     "term": "Class",
     "topic": "Programming languages",
-    "score": 207
+    "score": 101
   },
   {
     "term": "Command-line interface",
@@ -272,12 +329,12 @@
   {
     "term": "Compile time",
     "topic": "Programming languages",
-    "score": 599
+    "score": 59
   },
   {
     "term": "Compiler",
     "topic": "Programming languages",
-    "score": 97
+    "score": 127
   },
   {
     "term": "Computational engineering",
@@ -320,24 +377,24 @@
     "score": 24
   },
   {
-    "term": "Computer graphics",
+    "term": "Graphical processing unit",
     "topic": "Programming languages",
-    "score": 13
+    "score": 113
   },
   {
-    "term": "Computer hardware",
+    "term": "Hardware",
     "topic": "Programming languages",
-    "score": 24
+    "score": 124
   },
   {
     "term": "Computer language",
     "topic": "Programming languages",
-    "score": 122
+    "score": 22
   },
   {
-    "term": "Computer memory",
+    "term": "RAM",
     "topic": "Programming languages",
-    "score": 89
+    "score": 111
   },
   {
     "term": "Computer network",
@@ -347,7 +404,7 @@
   {
     "term": "Computer program",
     "topic": "Programming languages",
-    "score": 407
+    "score": 107
   },
   {
     "term": "Computer science",
@@ -362,7 +419,7 @@
   {
     "term": "Computer vision",
     "topic": "Programming languages",
-    "score": 69
+    "score": 120
   },
   {
     "term": "Computing",
@@ -377,7 +434,7 @@
   {
     "term": "Concurrency",
     "topic": "Programming languages",
-    "score": 0
+    "score": 20
   },
   {
     "term": "Concurrent computing",
@@ -390,9 +447,9 @@
     "score": 82
   },
   {
-    "term": "Context-free grammar",
+    "term": "Docker",
     "topic": "Programming languages",
-    "score": 4
+    "score": 104
   },
   {
     "term": "Control flow",
@@ -425,9 +482,9 @@
     "score": 16
   },
   {
-    "term": "Cyberwarfare",
+    "term": "Cybersecurity",
     "topic": "Programming languages",
-    "score": 0
+    "score": 101
   },
   {
     "term": "Data abstraction",
@@ -442,22 +499,22 @@
   {
     "term": "Data mining",
     "topic": "Programming languages",
-    "score": 185
+    "score": 145
   },
   {
     "term": "Data structure",
     "topic": "Programming languages",
-    "score": 164
+    "score": 124
   },
   {
     "term": "Data type",
     "topic": "Programming languages",
-    "score": 173
+    "score": 73
   },
   {
     "term": "Database",
     "topic": "Programming languages",
-    "score": 88
+    "score": 128
   },
   {
     "term": "Dependency",
@@ -492,12 +549,12 @@
   {
     "term": "Distributed system",
     "topic": "Programming languages",
-    "score": 156
+    "score": 116
   },
   {
     "term": "Doi",
     "topic": "Programming languages",
-    "score": 80
+    "score": 103
   },
   {
     "term": "Dynamic dispatch",
@@ -532,12 +589,12 @@
   {
     "term": "Exclusive or",
     "topic": "Programming languages",
-    "score": 134
+    "score": 34
   },
   {
     "term": "Executable",
     "topic": "Programming languages",
-    "score": 70
+    "score": 111
   },
   {
     "term": "Execution",
@@ -555,9 +612,9 @@
     "score": 31
   },
   {
-    "term": "First-order logic",
+    "term": "If",
     "topic": "Programming languages",
-    "score": 7
+    "score": 107
   },
   {
     "term": "Floating-point arithmetic",
@@ -567,7 +624,7 @@
   {
     "term": "Floating point",
     "topic": "Programming languages",
-    "score": 407
+    "score": 107
   },
   {
     "term": "Form factor",
@@ -577,12 +634,12 @@
   {
     "term": "Formal language",
     "topic": "Programming languages",
-    "score": 157
+    "score": 15
   },
   {
     "term": "Formal methods",
     "topic": "Programming languages",
-    "score": 190
+    "score": 19
   },
   {
     "term": "Formal specification",
@@ -617,7 +674,7 @@
   {
     "term": "Go",
     "topic": "Programming languages",
-    "score": 626
+    "score": 56
   },
   {
     "term": "Google",
@@ -627,12 +684,12 @@
   {
     "term": "Green computing",
     "topic": "Programming languages",
-    "score": 127
+    "score": 117
   },
   {
     "term": "HTML",
     "topic": "Programming languages",
-    "score": 90
+    "score": 110
   },
   {
     "term": "Halting problem",
@@ -647,7 +704,7 @@
   {
     "term": "Hardware security",
     "topic": "Programming languages",
-    "score": 102
+    "score": 10
   },
   {
     "term": "Harold Abelson",
@@ -687,7 +744,7 @@
   {
     "term": "Identifier",
     "topic": "Programming languages",
-    "score": 0
+    "score": 20
   },
   {
     "term": "Image compression",
@@ -707,12 +764,12 @@
   {
     "term": "Information security",
     "topic": "Programming languages",
-    "score": 160
+    "score": 120
   },
   {
     "term": "Information system",
     "topic": "Programming languages",
-    "score": 185
+    "score": 125
   },
   {
     "term": "Information theory",
@@ -727,7 +784,7 @@
   {
     "term": "Integer",
     "topic": "Programming languages",
-    "score": 84
+    "score": 104
   },
   {
     "term": "Integer overflow",
@@ -742,17 +799,17 @@
   {
     "term": "Interface",
     "topic": "Programming languages",
-    "score": 93
+    "score": 103
   },
   {
     "term": "Internet",
     "topic": "Programming languages",
-    "score": 90
+    "score": 111
   },
   {
-    "term": "Interpreted language",
+    "term": "Internet of Things",
     "topic": "Programming languages",
-    "score": 33
+    "score": 101
   },
   {
     "term": "Interpreter",
@@ -767,22 +824,22 @@
   {
     "term": "Iteration",
     "topic": "Programming languages",
-    "score": 90
+    "score": 101
   },
   {
     "term": "JavaScript",
     "topic": "Programming languages",
-    "score": 90
+    "score": 110
   },
   {
     "term": "Java",
     "topic": "Programming languages",
-    "score": 94
+    "score": 114
   },
   {
     "term": "Julia",
     "topic": "Programming languages",
-    "score": 27
+    "score": 2
   },
   {
     "term": "Just-in-time compilation",
@@ -807,7 +864,7 @@
   {
     "term": "Library",
     "topic": "Programming languages",
-    "score": 62
+    "score": 162
   },
   {
     "term": "Lisp",
@@ -827,7 +884,7 @@
   {
     "term": "Logic",
     "topic": "Programming languages",
-    "score": 17
+    "score": 117
   },
   {
     "term": "Logic gate",
@@ -937,7 +994,7 @@
   {
     "term": "Microsoft",
     "topic": "Programming languages",
-    "score": 10
+    "score": 50
   },
   {
     "term": "Middleware",
@@ -977,7 +1034,7 @@
   {
     "term": "Multithreading",
     "topic": "Programming languages",
-    "score": 90
+    "score": 120
   },
   {
     "term": "Murdoch University",
@@ -1002,7 +1059,7 @@
   {
     "term": "Natural language",
     "topic": "Programming languages",
-    "score": 165
+    "score": 125
   },
   {
     "term": "Negation",
@@ -1072,7 +1129,7 @@
   {
     "term": "Open-source software",
     "topic": "Programming languages",
-    "score": 90
+    "score": 110
   },
   {
     "term": "Open science",
@@ -1082,7 +1139,7 @@
   {
     "term": "Operating system",
     "topic": "Programming languages",
-    "score": 203
+    "score": 124
   },
   {
     "term": "Operations research",
@@ -1192,12 +1249,12 @@
   {
     "term": "Processor",
     "topic": "Programming languages",
-    "score": 94
+    "score": 104
   },
   {
     "term": "Programmer",
     "topic": "Programming languages",
-    "score": 93
+    "score": 123
   },
   {
     "term": "Pseudocode",
@@ -1212,7 +1269,7 @@
   {
     "term": "Python",
     "topic": "Programming languages",
-    "score": 14
+    "score": 114
   },
   {
     "term": "Quantum computing",
@@ -1232,7 +1289,7 @@
   {
     "term": "R",
     "topic": "Programming languages",
-    "score": 38
+    "score": 108
   },
   {
     "term": "Real-time computing",
@@ -1302,7 +1359,7 @@
   {
     "term": "Ruby",
     "topic": "Programming languages",
-    "score": 0
+    "score": 10
   },
   {
     "term": "Runtime error",
@@ -1322,7 +1379,7 @@
   {
     "term": "SAS language",
     "topic": "Programming languages",
-    "score": 10
+    "score": 1
   },
   {
     "term": "SIGPLAN",
@@ -1332,7 +1389,7 @@
   {
     "term": "SQL",
     "topic": "Programming languages",
-    "score": 0
+    "score": 10
   },
   {
     "term": "Scheme",
@@ -1367,7 +1424,7 @@
   {
     "term": "Server",
     "topic": "Programming languages",
-    "score": 80
+    "score": 140
   },
   {
     "term": "Session",
@@ -1422,7 +1479,7 @@
   {
     "term": "Software engineering",
     "topic": "Programming languages",
-    "score": 146
+    "score": 116
   },
   {
     "term": "Software framework",
@@ -1432,7 +1489,7 @@
   {
     "term": "Software maintenance",
     "topic": "Programming languages",
-    "score": 94
+    "score": 104
   },
   {
     "term": "Software quality",
@@ -1442,7 +1499,7 @@
   {
     "term": "Software repository",
     "topic": "Programming languages",
-    "score": 84
+    "score": 104
   },
   {
     "term": "Solid modeling",
@@ -1482,7 +1539,7 @@
   {
     "term": "Statistics",
     "topic": "Programming languages",
-    "score": 22
+    "score": 122
   },
   {
     "term": "Stochastic computing",
@@ -1697,12 +1754,12 @@
   {
     "term": "API",
     "topic": "Software engineering",
-    "score": 50
+    "score": 110
   },
   {
-    "term": "Anomaly detection",
+    "term": "Detection",
     "topic": "Software engineering",
-    "score": 84
+    "score": 101
   },
   {
     "term": "Asynchronous I/O",
@@ -1747,7 +1804,7 @@
   {
     "term": "CI/CD",
     "topic": "Software engineering",
-    "score": 0
+    "score": 101
   },
   {
     "term": "Cache",
@@ -1757,7 +1814,7 @@
   {
     "term": "Client",
     "topic": "Software engineering",
-    "score": 215
+    "score": 115
   },
   {
     "term": "Client\u2013server model",
@@ -1775,19 +1832,9 @@
     "score": 73
   },
   {
-    "term": "Computer compatibility",
+    "term": "Finetuning",
     "topic": "Software engineering",
-    "score": 1
-  },
-  {
-    "term": "Computer configuration",
-    "topic": "Software engineering",
-    "score": 20
-  },
-  {
-    "term": "Computer engineering",
-    "topic": "Software engineering",
-    "score": 5
+    "score": 105
   },
   {
     "term": "Computer performance",
@@ -1797,7 +1844,7 @@
   {
     "term": "Configuration management",
     "topic": "Software engineering",
-    "score": 98
+    "score": 9
   },
   {
     "term": "Consistency",
@@ -1812,7 +1859,7 @@
   {
     "term": "Construction engineering",
     "topic": "Software engineering",
-    "score": 141
+    "score": 88
   },
   {
     "term": "Continuous delivery",
@@ -1857,17 +1904,17 @@
   {
     "term": "David Parnas",
     "topic": "Software engineering",
-    "score": 5
+    "score": 1
   },
   {
-    "term": "Debugger",
+    "term": "Bug",
     "topic": "Software engineering",
-    "score": 50
+    "score": 150
   },
   {
     "term": "Debugging",
     "topic": "Software engineering",
-    "score": 50
+    "score": 105
   },
   {
     "term": "Decision-making",
@@ -1878,11 +1925,6 @@
     "term": "Deployment management",
     "topic": "Software engineering",
     "score": 92
-  },
-  {
-    "term": "Derek Hitchins",
-    "topic": "Software engineering",
-    "score": 0
   },
   {
     "term": "Design engineer",
@@ -1900,44 +1942,14 @@
     "score": 50
   },
   {
-    "term": "Developed world",
-    "topic": "Software engineering",
-    "score": 95
-  },
-  {
     "term": "Doctorate",
     "topic": "Software engineering",
     "score": 1
   },
   {
-    "term": "Domain-driven design",
-    "topic": "Software engineering",
-    "score": 11
-  },
-  {
-    "term": "Donald Knuth",
-    "topic": "Software engineering",
-    "score": 2
-  },
-  {
-    "term": "Durability",
-    "topic": "Software engineering",
-    "score": 2
-  },
-  {
     "term": "Edge Computing",
     "topic": "Software engineering",
     "score": 89
-  },
-  {
-    "term": "Educator",
-    "topic": "Software engineering",
-    "score": 10
-  },
-  {
-    "term": "Electrical engineering",
-    "topic": "Software engineering",
-    "score": 92
   },
   {
     "term": "Electrochemical engineering",
@@ -2022,7 +2034,7 @@
   {
     "term": "European Engineer",
     "topic": "Software engineering",
-    "score": 10
+    "score": 1
   },
   {
     "term": "Event-driven architecture",
@@ -2165,9 +2177,9 @@
     "score": 8
   },
   {
-    "term": "Importance",
+    "term": "Agile",
     "topic": "Software engineering",
-    "score": 10
+    "score": 101
   },
   {
     "term": "Industrial engineering",
@@ -2527,7 +2539,7 @@
   {
     "term": "Replication",
     "topic": "Software engineering",
-    "score": 91
+    "score": 101
   },
   {
     "term": "Requirements",
@@ -2537,7 +2549,7 @@
   {
     "term": "Research",
     "topic": "Software engineering",
-    "score": 171
+    "score": 141
   },
   {
     "term": "Researcher",
@@ -2577,7 +2589,7 @@
   {
     "term": "Scrum",
     "topic": "Software engineering",
-    "score": 70
+    "score": 101
   },
   {
     "term": "Seattle University",
@@ -2632,7 +2644,7 @@
   {
     "term": "Software",
     "topic": "Software engineering",
-    "score": 90
+    "score": 110
   },
   {
     "term": "Software archaeology",
@@ -2832,7 +2844,7 @@
   {
     "term": "Unified process",
     "topic": "Software engineering",
-    "score": 207
+    "score": 20
   },
   {
     "term": "Unit testing",
@@ -2840,7 +2852,7 @@
     "score": 135
   },
   {
-    "term": "User experience",
+    "term": "User Interface",
     "topic": "Software engineering",
     "score": 111
   },
@@ -2872,7 +2884,7 @@
   {
     "term": "Web traffic",
     "topic": "Software engineering",
-    "score": 74
+    "score": 104
   },
   {
     "term": "Webhook",
@@ -2885,9 +2897,9 @@
     "score": 6
   },
   {
-    "term": "Wolt Fabrycky",
+    "term": "Large Language Model",
     "topic": "Software engineering",
-    "score": 0
+    "score": 110
   },
   {
     "term": "YouTube",
@@ -3038,7 +3050,7 @@
   {
     "term": "Data compression",
     "topic": "Algorithms",
-    "score": 88
+    "score": 108
   },
   {
     "term": "Data processing",
@@ -3066,9 +3078,9 @@
     "score": 7
   },
   {
-    "term": "Deterministic algorithm",
+    "term": "Prediction",
     "topic": "Algorithms",
-    "score": 8
+    "score": 108
   },
   {
     "term": "Difference engine",
@@ -3253,7 +3265,7 @@
   {
     "term": "Geometric analysis",
     "topic": "Algorithms",
-    "score": 125
+    "score": 25
   },
   {
     "term": "Geometric calculus",
@@ -3328,7 +3340,7 @@
   {
     "term": "Hash table",
     "topic": "Algorithms",
-    "score": 199
+    "score": 16
   },
   {
     "term": "Hdl",
@@ -3436,9 +3448,9 @@
     "score": 16
   },
   {
-    "term": "Program loops",
+    "term": "Loop",
     "topic": "Algorithms",
-    "score": 39
+    "score": 101
   },
   {
     "term": "Program optimization",
@@ -3463,7 +3475,7 @@
   {
     "term": "Quantum computation",
     "topic": "Algorithms",
-    "score": 12
+    "score": 120
   },
   {
     "term": "Quantum entanglement",
@@ -3553,17 +3565,17 @@
   {
     "term": "State-transition table",
     "topic": "Algorithms",
-    "score": 198
+    "score": 98
   },
   {
     "term": "State diagram",
     "topic": "Algorithms",
-    "score": 817
+    "score": 17
   },
   {
     "term": "Stephen Kleene",
     "topic": "Algorithms",
-    "score": 18
+    "score": 1
   },
   {
     "term": "Stochastic calculus",
@@ -3733,7 +3745,7 @@
   {
     "term": "Data",
     "topic": "Data structures",
-    "score": 173
+    "score": 142
   },
   {
     "term": "Data-flow diagram",
@@ -4122,24 +4134,68 @@
   },
 ];
 
-    // Display term count
-    document.getElementById('term-count').textContent = termsDatabase.length;
+    // Display term count and current difficulty mode stats
+    let currentDifficulty = 'easy'; // Default to easy mode
+    
+    function updateStats() {
+      const totalTerms = termsDatabase.length;
+      const easyTerms = termsDatabase.filter(term => term.score > 100).length;
+      document.getElementById('term-count').textContent = 
+        currentDifficulty === 'easy' ? easyTerms : totalTerms;
+    }
 
-    // Weighted random selection using log scaling (similar to Python version)
+    // Set difficulty mode
+    function setDifficulty(mode) {
+      currentDifficulty = mode;
+      
+      // Update button states
+      document.getElementById('easyMode').classList.toggle('active', mode === 'easy');
+      document.getElementById('hardMode').classList.toggle('active', mode === 'hard');
+      
+      updateStats();
+      fetchWords(); // Automatically refresh words when difficulty changes
+    }
+
+    // Weighted random selection with Easy/Hard modes and duplicate prevention
     function weightedReroll(n = 5) {
-      // Calculate weights using log scaling
-      const weights = termsDatabase.map(term => Math.log(term.score + 2));
-      const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+      // Filter terms based on difficulty
+      let availableTerms;
+      if (currentDifficulty === 'easy') {
+        availableTerms = termsDatabase.filter(term => term.score > 100);
+      } else {
+        availableTerms = termsDatabase; // All terms for hard mode
+      }
+      
+      // Ensure we don't try to select more terms than available
+      n = Math.min(n, availableTerms.length);
       
       const choices = [];
-      for (let i = 0; i < n; i++) {
-        let random = Math.random() * totalWeight;
-        let weightSum = 0;
+      const selectedIndices = new Set();
+      
+      // Pre-calculate weights once
+      const weights = availableTerms.map(term => Math.log(term.score + 2));
+      
+      while (choices.length < n && selectedIndices.size < availableTerms.length) {
+        // Create cumulative weights excluding already selected terms
+        const availableWeights = [];
+        const availableIndices = [];
+        let totalWeight = 0;
         
-        for (let j = 0; j < termsDatabase.length; j++) {
-          weightSum += weights[j];
-          if (random <= weightSum) {
-            choices.push(termsDatabase[j]);
+        for (let i = 0; i < availableTerms.length; i++) {
+          if (!selectedIndices.has(i)) {
+            totalWeight += weights[i];
+            availableWeights.push(totalWeight);
+            availableIndices.push(i);
+          }
+        }
+        
+        // Select from remaining terms
+        let random = Math.random() * totalWeight;
+        for (let j = 0; j < availableWeights.length; j++) {
+          if (random <= availableWeights[j]) {
+            const selectedIndex = availableIndices[j];
+            choices.push(availableTerms[selectedIndex]);
+            selectedIndices.add(selectedIndex);
             break;
           }
         }
@@ -4161,7 +4217,9 @@
     }
 
     // Load initial words when page loads
-    window.addEventListener('load', fetchWords);
+    window.addEventListener('load', function() {
+      setDifficulty('easy'); // Start with easy mode
+    });
   </script>
 </body>
 
