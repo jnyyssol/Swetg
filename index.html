@@ -1,0 +1,8211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Software Engineering word generator</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      padding: 2rem; 
+      text-align: center; 
+      background-color: #f5f5f5;
+      margin: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 2rem;
+    }
+    button { 
+      padding: 12px 24px; 
+      font-size: 1.2rem; 
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 2rem;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    ul { 
+      list-style: none; 
+      padding: 0; 
+      margin-top: 1rem; 
+    }
+    li { 
+      margin: 1rem 0; 
+      font-size: 1.5rem; 
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 5px;
+      border-left: 4px solid #007bff;
+    }
+    .footer {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .stats {
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Software Engineering term generator</h1>
+    <div class="stats"><span id="term-count"> </span> terms scraped from Wikipedia and weighted with nltk, the list is NOT curated.</span></div>
+    <button onclick="fetchWords()">Reroll Words</button>
+    <ul id="word-list"></ul>
+      
+  </div>
+
+  <script>
+    // Software engineering terms database (converted from CSV)
+    const termsDatabase = [
+  {
+    "term": "ALGOL",
+    "topic": "Programming languages",
+    "score": 3
+  },
+  {
+    "term": "APL",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "ASCII",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Abstract machine",
+    "topic": "Programming languages",
+    "score": 137
+  },
+  {
+    "term": "Abstraction",
+    "topic": "Programming languages",
+    "score": 16
+  },
+  {
+    "term": "Ada",
+    "topic": "Programming languages",
+    "score": 17
+  },
+  {
+    "term": "Addison-Wesley",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Alan Perlis",
+    "topic": "Programming languages",
+    "score": 5
+  },
+  {
+    "term": "Algorithm",
+    "topic": "Programming languages",
+    "score": 1
+  },
+  {
+    "term": "Algorithm design",
+    "topic": "Programming languages",
+    "score": 115
+  },
+  {
+    "term": "Algorithmic efficiency",
+    "topic": "Programming languages",
+    "score": 50
+  },
+  {
+    "term": "Aliasing",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Application security",
+    "topic": "Programming languages",
+    "score": 159
+  },
+  {
+    "term": "Application software",
+    "topic": "Programming languages",
+    "score": 68
+  },
+  {
+    "term": "ArXiv",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Array",
+    "topic": "Programming languages",
+    "score": 11
+  },
+  {
+    "term": "Artificial intelligence",
+    "topic": "Programming languages",
+    "score": 65
+  },
+  {
+    "term": "Assembly language",
+    "topic": "Programming languages",
+    "score": 159
+  },
+  {
+    "term": "Assembly languages",
+    "topic": "Programming languages",
+    "score": 90
+  },
+  {
+    "term": "Assignment",
+    "topic": "Programming languages",
+    "score": 62
+  },
+  {
+    "term": "Associative arrays",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Augmented reality",
+    "topic": "Programming languages",
+    "score": 88
+  },
+  {
+    "term": "Automata theory",
+    "topic": "Programming languages",
+    "score": 129
+  },
+  {
+    "term": "BASIC",
+    "topic": "Programming languages",
+    "score": 171
+  },
+  {
+    "term": "Backus\u2013Naur form",
+    "topic": "Programming languages",
+    "score": 370
+  },
+  {
+    "term": "Ballerina",
+    "topic": "Programming languages",
+    "score": 1
+  },
+  {
+    "term": "Batch processing",
+    "topic": "Programming languages",
+    "score": 43
+  },
+  {
+    "term": "Blockly",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Boolean algebra",
+    "topic": "Programming languages",
+    "score": 2
+  },
+  {
+    "term": "Boolean function",
+    "topic": "Programming languages",
+    "score": 113
+  },
+  {
+    "term": "Byte",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Bytecode",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "C++",
+    "topic": "Programming languages",
+    "score": 121
+  },
+  {
+    "term": "COBOL",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "CPU",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "C",
+    "topic": "Programming languages",
+    "score": 121
+  },
+  {
+    "term": "C Sharp",
+    "topic": "Programming languages",
+    "score": 193
+  },
+  {
+    "term": "Caml",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Carbon",
+    "topic": "Programming languages",
+    "score": 30
+  },
+  {
+    "term": "Case statement",
+    "topic": "Programming languages",
+    "score": 503
+  },
+  {
+    "term": "Character",
+    "topic": "Programming languages",
+    "score": 118
+  },
+  {
+    "term": "Chomsky hierarchy",
+    "topic": "Programming languages",
+    "score": 9
+  },
+  {
+    "term": "Class",
+    "topic": "Programming languages",
+    "score": 207
+  },
+  {
+    "term": "Clojure",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Command-line interface",
+    "topic": "Programming languages",
+    "score": 3
+  },
+  {
+    "term": "Command",
+    "topic": "Programming languages",
+    "score": 72
+  },
+  {
+    "term": "Comment",
+    "topic": "Programming languages",
+    "score": 42
+  },
+  {
+    "term": "Communication protocol",
+    "topic": "Programming languages",
+    "score": 70
+  },
+  {
+    "term": "Compile time",
+    "topic": "Programming languages",
+    "score": 1599
+  },
+  {
+    "term": "Compiled",
+    "topic": "Programming languages",
+    "score": 10
+  },
+  {
+    "term": "Compiled language",
+    "topic": "Programming languages",
+    "score": 119
+  },
+  {
+    "term": "Compiler",
+    "topic": "Programming languages",
+    "score": 7
+  },
+  {
+    "term": "Compiler construction",
+    "topic": "Programming languages",
+    "score": 102
+  },
+  {
+    "term": "Computability theory",
+    "topic": "Programming languages",
+    "score": 129
+  },
+  {
+    "term": "Computational biology",
+    "topic": "Programming languages",
+    "score": 8
+  },
+  {
+    "term": "Computational chemistry",
+    "topic": "Programming languages",
+    "score": 17
+  },
+  {
+    "term": "Computational complexity",
+    "topic": "Programming languages",
+    "score": 15
+  },
+  {
+    "term": "Computational engineering",
+    "topic": "Programming languages",
+    "score": 47
+  },
+  {
+    "term": "Computational geometry",
+    "topic": "Programming languages",
+    "score": 10
+  },
+  {
+    "term": "Computational mathematics",
+    "topic": "Programming languages",
+    "score": 21
+  },
+  {
+    "term": "Computational physics",
+    "topic": "Programming languages",
+    "score": 23
+  },
+  {
+    "term": "Computer Programming",
+    "topic": "Programming languages",
+    "score": 18
+  },
+  {
+    "term": "Computer accessibility",
+    "topic": "Programming languages",
+    "score": 15
+  },
+  {
+    "term": "Computer animation",
+    "topic": "Programming languages",
+    "score": 15
+  },
+  {
+    "term": "Computer architecture",
+    "topic": "Programming languages",
+    "score": 24
+  },
+  {
+    "term": "Computer graphics",
+    "topic": "Programming languages",
+    "score": 13
+  },
+  {
+    "term": "Computer hardware",
+    "topic": "Programming languages",
+    "score": 24
+  },
+  {
+    "term": "Computer language",
+    "topic": "Programming languages",
+    "score": 122
+  },
+  {
+    "term": "Computer memory",
+    "topic": "Programming languages",
+    "score": 89
+  },
+  {
+    "term": "Computer network",
+    "topic": "Programming languages",
+    "score": 43
+  },
+  {
+    "term": "Computer program",
+    "topic": "Programming languages",
+    "score": 407
+  },
+  {
+    "term": "Computer science",
+    "topic": "Programming languages",
+    "score": 144
+  },
+  {
+    "term": "Computer security",
+    "topic": "Programming languages",
+    "score": 104
+  },
+  {
+    "term": "Computer vision",
+    "topic": "Programming languages",
+    "score": 69
+  },
+  {
+    "term": "Computing",
+    "topic": "Programming languages",
+    "score": 11
+  },
+  {
+    "term": "Computing platform",
+    "topic": "Programming languages",
+    "score": 83
+  },
+  {
+    "term": "Concurrency",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Concurrent computing",
+    "topic": "Programming languages",
+    "score": 18
+  },
+  {
+    "term": "Conditional expression",
+    "topic": "Programming languages",
+    "score": 82
+  },
+  {
+    "term": "Context-free grammar",
+    "topic": "Programming languages",
+    "score": 4
+  },
+  {
+    "term": "Control flow",
+    "topic": "Programming languages",
+    "score": 291
+  },
+  {
+    "term": "Control theory",
+    "topic": "Programming languages",
+    "score": 352
+  },
+  {
+    "term": "Converse",
+    "topic": "Programming languages",
+    "score": 5
+  },
+  {
+    "term": "Converse nonimplication",
+    "topic": "Programming languages",
+    "score": 5
+  },
+  {
+    "term": "Cross-validation",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Cryptography",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Cyber-physical system",
+    "topic": "Programming languages",
+    "score": 416
+  },
+  {
+    "term": "Cyberwarfare",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Data abstraction",
+    "topic": "Programming languages",
+    "score": 189
+  },
+  {
+    "term": "Data exchange",
+    "topic": "Programming languages",
+    "score": 243
+  },
+  {
+    "term": "Data mining",
+    "topic": "Programming languages",
+    "score": 185
+  },
+  {
+    "term": "Data structure",
+    "topic": "Programming languages",
+    "score": 264
+  },
+  {
+    "term": "Data type",
+    "topic": "Programming languages",
+    "score": 373
+  },
+  {
+    "term": "Database",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "David Gelernter",
+    "topic": "Programming languages",
+    "score": 51
+  },
+  {
+    "term": "Dependability",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Dialect",
+    "topic": "Programming languages",
+    "score": 10
+  },
+  {
+    "term": "Digital art",
+    "topic": "Programming languages",
+    "score": 214
+  },
+  {
+    "term": "Digital library",
+    "topic": "Programming languages",
+    "score": 68
+  },
+  {
+    "term": "Digital marketing",
+    "topic": "Programming languages",
+    "score": 49
+  },
+  {
+    "term": "Discrete mathematics",
+    "topic": "Programming languages",
+    "score": 27
+  },
+  {
+    "term": "Distributed computing",
+    "topic": "Programming languages",
+    "score": 38
+  },
+  {
+    "term": "Distributed systems",
+    "topic": "Programming languages",
+    "score": 156
+  },
+  {
+    "term": "Doi",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Domain-specific language",
+    "topic": "Programming languages",
+    "score": 109
+  },
+  {
+    "term": "Domain-specific modeling",
+    "topic": "Programming languages",
+    "score": 1
+  },
+  {
+    "term": "Dynamic dispatch",
+    "topic": "Programming languages",
+    "score": 29
+  },
+  {
+    "term": "E-commerce",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Educational technology",
+    "topic": "Programming languages",
+    "score": 113
+  },
+  {
+    "term": "Electronic publishing",
+    "topic": "Programming languages",
+    "score": 82
+  },
+  {
+    "term": "Electronic voting",
+    "topic": "Programming languages",
+    "score": 98
+  },
+  {
+    "term": "Elixir",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Ellis Horowitz",
+    "topic": "Programming languages",
+    "score": 10
+  },
+  {
+    "term": "Embedded system",
+    "topic": "Programming languages",
+    "score": 420
+  },
+  {
+    "term": "Enterprise software",
+    "topic": "Programming languages",
+    "score": 31
+  },
+  {
+    "term": "Enumeration",
+    "topic": "Programming languages",
+    "score": 1
+  },
+  {
+    "term": "Erlang",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Evaluation strategy",
+    "topic": "Programming languages",
+    "score": 53
+  },
+  {
+    "term": "Exception handling",
+    "topic": "Programming languages",
+    "score": 78
+  },
+  {
+    "term": "Exclusive or",
+    "topic": "Programming languages",
+    "score": 4234
+  },
+  {
+    "term": "Executable",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Execution",
+    "topic": "Programming languages",
+    "score": 15
+  },
+  {
+    "term": "Expression",
+    "topic": "Programming languages",
+    "score": 79
+  },
+  {
+    "term": "Expressive power",
+    "topic": "Programming languages",
+    "score": 349
+  },
+  {
+    "term": "Extensible programming",
+    "topic": "Programming languages",
+    "score": 5
+  },
+  {
+    "term": "F Sharp",
+    "topic": "Programming languages",
+    "score": 108
+  },
+  {
+    "term": "Fault tolerance",
+    "topic": "Programming languages",
+    "score": 31
+  },
+  {
+    "term": "First-order logic",
+    "topic": "Programming languages",
+    "score": 17
+  },
+  {
+    "term": "Floating-point arithmetic",
+    "topic": "Programming languages",
+    "score": 8
+  },
+  {
+    "term": "Floating point",
+    "topic": "Programming languages",
+    "score": 407
+  },
+  {
+    "term": "Form factor",
+    "topic": "Programming languages",
+    "score": 441
+  },
+  {
+    "term": "Formal language",
+    "topic": "Programming languages",
+    "score": 157
+  },
+  {
+    "term": "Formal methods",
+    "topic": "Programming languages",
+    "score": 190
+  },
+  {
+    "term": "Formal specification",
+    "topic": "Programming languages",
+    "score": 51
+  },
+  {
+    "term": "Forth",
+    "topic": "Programming languages",
+    "score": 71
+  },
+  {
+    "term": "Fortran",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Functional completeness",
+    "topic": "Programming languages",
+    "score": 28
+  },
+  {
+    "term": "Functional programming",
+    "topic": "Programming languages",
+    "score": 29
+  },
+  {
+    "term": "Garbage collection",
+    "topic": "Programming languages",
+    "score": 91
+  },
+  {
+    "term": "Go",
+    "topic": "Programming languages",
+    "score": 626
+  },
+  {
+    "term": "Google",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Green computing",
+    "topic": "Programming languages",
+    "score": 127
+  },
+  {
+    "term": "HTML",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Halting problem",
+    "topic": "Programming languages",
+    "score": 315
+  },
+  {
+    "term": "Hardware acceleration",
+    "topic": "Programming languages",
+    "score": 28
+  },
+  {
+    "term": "Hardware security",
+    "topic": "Programming languages",
+    "score": 102
+  },
+  {
+    "term": "Harold Abelson",
+    "topic": "Programming languages",
+    "score": 33
+  },
+  {
+    "term": "Haskell",
+    "topic": "Programming languages",
+    "score": 2
+  },
+  {
+    "term": "Health informatics",
+    "topic": "Programming languages",
+    "score": 105
+  },
+  {
+    "term": "Heap",
+    "topic": "Programming languages",
+    "score": 14
+  },
+  {
+    "term": "Human-readable",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Human resources",
+    "topic": "Programming languages",
+    "score": 371
+  },
+  {
+    "term": "Human\u2013computer interaction",
+    "topic": "Programming languages",
+    "score": 17
+  },
+  {
+    "term": "IBM 704",
+    "topic": "Programming languages",
+    "score": 7
+  },
+  {
+    "term": "ISBN",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "ISSN",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Identifier",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Image compression",
+    "topic": "Programming languages",
+    "score": 127
+  },
+  {
+    "term": "Imperative languages",
+    "topic": "Programming languages",
+    "score": 50
+  },
+  {
+    "term": "Imperative programming",
+    "topic": "Programming languages",
+    "score": 15
+  },
+  {
+    "term": "Implicit typing",
+    "topic": "Programming languages",
+    "score": 20
+  },
+  {
+    "term": "Information hiding",
+    "topic": "Programming languages",
+    "score": 286
+  },
+  {
+    "term": "Information retrieval",
+    "topic": "Programming languages",
+    "score": 270
+  },
+  {
+    "term": "Information security",
+    "topic": "Programming languages",
+    "score": 360
+  },
+  {
+    "term": "Information system",
+    "topic": "Programming languages",
+    "score": 685
+  },
+  {
+    "term": "Information theory",
+    "topic": "Programming languages",
+    "score": 398
+  },
+  {
+    "term": "Inheritance",
+    "topic": "Programming languages",
+    "score": 6
+  },
+  {
+    "term": "Integer",
+    "topic": "Programming languages",
+    "score": 4
+  },
+  {
+    "term": "Integer overflow",
+    "topic": "Programming languages",
+    "score": 6
+  },
+  {
+    "term": "Integrated circuit",
+    "topic": "Programming languages",
+    "score": 34
+  },
+  {
+    "term": "Interaction design",
+    "topic": "Programming languages",
+    "score": 131
+  },
+  {
+    "term": "Interface",
+    "topic": "Programming languages",
+    "score": 3
+  },
+  {
+    "term": "Internet",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Interpreted language",
+    "topic": "Programming languages",
+    "score": 133
+  },
+  {
+    "term": "Interpreter",
+    "topic": "Programming languages",
+    "score": 8
+  },
+  {
+    "term": "Invariant-based programming",
+    "topic": "Programming languages",
+    "score": 5
+  },
+  {
+    "term": "Iteration",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "JSTOR",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "JavaScript",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Java",
+    "topic": "Programming languages",
+    "score": 4
+  },
+  {
+    "term": "Julia",
+    "topic": "Programming languages",
+    "score": 27
+  },
+  {
+    "term": "Just-in-time compilation",
+    "topic": "Programming languages",
+    "score": 11
+  },
+  {
+    "term": "Kotlin",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "LabVIEW",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Language-oriented programming",
+    "topic": "Programming languages",
+    "score": 5
+  },
+  {
+    "term": "Language primitive",
+    "topic": "Programming languages",
+    "score": 147
+  },
+  {
+    "term": "Lexical analysis",
+    "topic": "Programming languages",
+    "score": 110
+  },
+  {
+    "term": "Library",
+    "topic": "Programming languages",
+    "score": 62
+  },
+  {
+    "term": "Lisp",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Lisp macro",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "List",
+    "topic": "Programming languages",
+    "score": 133
+  },
+  {
+    "term": "Literate programming",
+    "topic": "Programming languages",
+    "score": 8
+  },
+  {
+    "term": "Logic",
+    "topic": "Programming languages",
+    "score": 17
+  },
+  {
+    "term": "Logic gate",
+    "topic": "Programming languages",
+    "score": 54
+  },
+  {
+    "term": "Logic programming",
+    "topic": "Programming languages",
+    "score": 22
+  },
+  {
+    "term": "Logical NOR",
+    "topic": "Programming languages",
+    "score": 229
+  },
+  {
+    "term": "Logical biconditional",
+    "topic": "Programming languages",
+    "score": 34
+  },
+  {
+    "term": "Logical conjunction",
+    "topic": "Programming languages",
+    "score": 50
+  },
+  {
+    "term": "Logical connective",
+    "topic": "Programming languages",
+    "score": 37
+  },
+  {
+    "term": "Logical disjunction",
+    "topic": "Programming languages",
+    "score": 34
+  },
+  {
+    "term": "Lua",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "MATLAB",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "ML",
+    "topic": "Programming languages",
+    "score": 11
+  },
+  {
+    "term": "Machine code",
+    "topic": "Programming languages",
+    "score": 142
+  },
+  {
+    "term": "Machine language",
+    "topic": "Programming languages",
+    "score": 212
+  },
+  {
+    "term": "Machine learning",
+    "topic": "Programming languages",
+    "score": 163
+  },
+  {
+    "term": "Mads Tofte",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Mainframe",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Mainframe computer",
+    "topic": "Programming languages",
+    "score": 13
+  },
+  {
+    "term": "Mainframes",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Markup language",
+    "topic": "Programming languages",
+    "score": 109
+  },
+  {
+    "term": "Material conditional",
+    "topic": "Programming languages",
+    "score": 177
+  },
+  {
+    "term": "Material nonimplication",
+    "topic": "Programming languages",
+    "score": 174
+  },
+  {
+    "term": "Mathematical analysis",
+    "topic": "Programming languages",
+    "score": 132
+  },
+  {
+    "term": "Mathematical logic",
+    "topic": "Programming languages",
+    "score": 41
+  },
+  {
+    "term": "Mathematical optimization",
+    "topic": "Programming languages",
+    "score": 25
+  },
+  {
+    "term": "Mathematical software",
+    "topic": "Programming languages",
+    "score": 24
+  },
+  {
+    "term": "Message passing",
+    "topic": "Programming languages",
+    "score": 129
+  },
+  {
+    "term": "Meta-circular evaluator",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Metaprogramming",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Michael Sipser",
+    "topic": "Programming languages",
+    "score": 11
+  },
+  {
+    "term": "Microprocessor",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Microsoft",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Middleware",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Mitchell Wand",
+    "topic": "Programming languages",
+    "score": 27
+  },
+  {
+    "term": "Mobile computing",
+    "topic": "Programming languages",
+    "score": 55
+  },
+  {
+    "term": "Modeling language",
+    "topic": "Programming languages",
+    "score": 110
+  },
+  {
+    "term": "Monitor",
+    "topic": "Programming languages",
+    "score": 3
+  },
+  {
+    "term": "Muffy Thomas",
+    "topic": "Programming languages",
+    "score": 100
+  },
+  {
+    "term": "Multi-task learning",
+    "topic": "Programming languages",
+    "score": 60
+  },
+  {
+    "term": "Multimedia database",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Multiprocessing",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Multithreading",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Murdoch University",
+    "topic": "Programming languages",
+    "score": 214
+  },
+  {
+    "term": "NIMPLY gate",
+    "topic": "Programming languages",
+    "score": 37
+  },
+  {
+    "term": "Name collision",
+    "topic": "Programming languages",
+    "score": 301
+  },
+  {
+    "term": "Natural-language programming",
+    "topic": "Programming languages",
+    "score": 5
+  },
+  {
+    "term": "Natural language",
+    "topic": "Programming languages",
+    "score": 265
+  },
+  {
+    "term": "Negation",
+    "topic": "Programming languages",
+    "score": 5
+  },
+  {
+    "term": "Network architecture",
+    "topic": "Programming languages",
+    "score": 41
+  },
+  {
+    "term": "Network performance",
+    "topic": "Programming languages",
+    "score": 152
+  },
+  {
+    "term": "Network scheduler",
+    "topic": "Programming languages",
+    "score": 30
+  },
+  {
+    "term": "Network security",
+    "topic": "Programming languages",
+    "score": 121
+  },
+  {
+    "term": "Network service",
+    "topic": "Programming languages",
+    "score": 345
+  },
+  {
+    "term": "Networking hardware",
+    "topic": "Programming languages",
+    "score": 11
+  },
+  {
+    "term": "Null pointer",
+    "topic": "Programming languages",
+    "score": 16
+  },
+  {
+    "term": "Numerical analysis",
+    "topic": "Programming languages",
+    "score": 127
+  },
+  {
+    "term": "OCaml",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Object-oriented programming",
+    "topic": "Programming languages",
+    "score": 5
+  },
+  {
+    "term": "Object Pascal",
+    "topic": "Programming languages",
+    "score": 66
+  },
+  {
+    "term": "Ones complement",
+    "topic": "Programming languages",
+    "score": 137
+  },
+  {
+    "term": "Open-source software",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Open science",
+    "topic": "Programming languages",
+    "score": 449
+  },
+  {
+    "term": "Operating system",
+    "topic": "Programming languages",
+    "score": 503
+  },
+  {
+    "term": "Operations research",
+    "topic": "Programming languages",
+    "score": 255
+  },
+  {
+    "term": "Operator overload",
+    "topic": "Programming languages",
+    "score": 52
+  },
+  {
+    "term": "Optimization",
+    "topic": "Programming languages",
+    "score": 1
+  },
+  {
+    "term": "Oracle Corporation",
+    "topic": "Programming languages",
+    "score": 92
+  },
+  {
+    "term": "Orthogonality",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "PHP",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "PMID",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "PWCT",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Parallel computing",
+    "topic": "Programming languages",
+    "score": 51
+  },
+  {
+    "term": "Parameter",
+    "topic": "Programming languages",
+    "score": 7
+  },
+  {
+    "term": "Parse tree",
+    "topic": "Programming languages",
+    "score": 59
+  },
+  {
+    "term": "Pascal",
+    "topic": "Programming languages",
+    "score": 1
+  },
+  {
+    "term": "Peripheral",
+    "topic": "Programming languages",
+    "score": 8
+  },
+  {
+    "term": "Perl",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Personal computer",
+    "topic": "Programming languages",
+    "score": 209
+  },
+  {
+    "term": "Photograph manipulation",
+    "topic": "Programming languages",
+    "score": 25
+  },
+  {
+    "term": "Pointer",
+    "topic": "Programming languages",
+    "score": 3
+  },
+  {
+    "term": "Portability",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "PostScript",
+    "topic": "Programming languages",
+    "score": 3
+  },
+  {
+    "term": "Primitive type",
+    "topic": "Programming languages",
+    "score": 238
+  },
+  {
+    "term": "Probability",
+    "topic": "Programming languages",
+    "score": 35
+  },
+  {
+    "term": "Processor",
+    "topic": "Programming languages",
+    "score": 4
+  },
+  {
+    "term": "Programmer",
+    "topic": "Programming languages",
+    "score": 3
+  },
+  {
+    "term": "Programming paradigm",
+    "topic": "Programming languages",
+    "score": 11
+  },
+  {
+    "term": "Programming team",
+    "topic": "Programming languages",
+    "score": 88
+  },
+  {
+    "term": "Programming tool",
+    "topic": "Programming languages",
+    "score": 45
+  },
+  {
+    "term": "Prolog",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Propositional calculus",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Pseudocode",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Punch cards",
+    "topic": "Programming languages",
+    "score": 41
+  },
+  {
+    "term": "Python",
+    "topic": "Programming languages",
+    "score": 14
+  },
+  {
+    "term": "Quantum computing",
+    "topic": "Programming languages",
+    "score": 16
+  },
+  {
+    "term": "Query language",
+    "topic": "Programming languages",
+    "score": 110
+  },
+  {
+    "term": "REXX",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "R",
+    "topic": "Programming languages",
+    "score": 38
+  },
+  {
+    "term": "Racket",
+    "topic": "Programming languages",
+    "score": 5
+  },
+  {
+    "term": "Raku",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Randomized algorithm",
+    "topic": "Programming languages",
+    "score": 1
+  },
+  {
+    "term": "Raphael Finkel",
+    "topic": "Programming languages",
+    "score": 4
+  },
+  {
+    "term": "Ravi Sethi",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Real-time computing",
+    "topic": "Programming languages",
+    "score": 11
+  },
+  {
+    "term": "Real number",
+    "topic": "Programming languages",
+    "score": 730
+  },
+  {
+    "term": "Rebol",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Record",
+    "topic": "Programming languages",
+    "score": 137
+  },
+  {
+    "term": "Recursion",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Reference implementation",
+    "topic": "Programming languages",
+    "score": 75
+  },
+  {
+    "term": "Reflective programming",
+    "topic": "Programming languages",
+    "score": 11
+  },
+  {
+    "term": "Regular expression",
+    "topic": "Programming languages",
+    "score": 162
+  },
+  {
+    "term": "Reinforcement learning",
+    "topic": "Programming languages",
+    "score": 62
+  },
+  {
+    "term": "Rendering",
+    "topic": "Programming languages",
+    "score": 11
+  },
+  {
+    "term": "Replication crisis",
+    "topic": "Programming languages",
+    "score": 83
+  },
+  {
+    "term": "Requirements analysis",
+    "topic": "Programming languages",
+    "score": 191
+  },
+  {
+    "term": "Reserved word",
+    "topic": "Programming languages",
+    "score": 301
+  },
+  {
+    "term": "Rice's theorem",
+    "topic": "Programming languages",
+    "score": 18
+  },
+  {
+    "term": "Ring",
+    "topic": "Programming languages",
+    "score": 47
+  },
+  {
+    "term": "Robert Harper",
+    "topic": "Programming languages",
+    "score": 85
+  },
+  {
+    "term": "Robin Milner",
+    "topic": "Programming languages",
+    "score": 2
+  },
+  {
+    "term": "Ruby",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Runtime error",
+    "topic": "Programming languages",
+    "score": 36
+  },
+  {
+    "term": "Rust",
+    "topic": "Programming languages",
+    "score": 10
+  },
+  {
+    "term": "S-expression",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "SAS language",
+    "topic": "Programming languages",
+    "score": 109
+  },
+  {
+    "term": "SIGPLAN",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "SQL",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Scheme",
+    "topic": "Programming languages",
+    "score": 33
+  },
+  {
+    "term": "Scope",
+    "topic": "Programming languages",
+    "score": 27
+  },
+  {
+    "term": "Scratch",
+    "topic": "Programming languages",
+    "score": 9
+  },
+  {
+    "term": "Scripting language",
+    "topic": "Programming languages",
+    "score": 109
+  },
+  {
+    "term": "Scripting languages",
+    "topic": "Programming languages",
+    "score": 40
+  },
+  {
+    "term": "Security hacker",
+    "topic": "Programming languages",
+    "score": 91
+  },
+  {
+    "term": "Security service",
+    "topic": "Programming languages",
+    "score": 406
+  },
+  {
+    "term": "Seif Haridi",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Semantics",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Semaphore",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Server",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Service-oriented programming",
+    "topic": "Programming languages",
+    "score": 5
+  },
+  {
+    "term": "Session",
+    "topic": "Programming languages",
+    "score": 80
+  },
+  {
+    "term": "Shading language",
+    "topic": "Programming languages",
+    "score": 113
+  },
+  {
+    "term": "Sheffer stroke",
+    "topic": "Programming languages",
+    "score": 19
+  },
+  {
+    "term": "Shell script",
+    "topic": "Programming languages",
+    "score": 33
+  },
+  {
+    "term": "Shriram Krishnamurthi",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Simula",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Smalltalk",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Social computing",
+    "topic": "Programming languages",
+    "score": 391
+  },
+  {
+    "term": "Social software",
+    "topic": "Programming languages",
+    "score": 380
+  },
+  {
+    "term": "Software construction",
+    "topic": "Programming languages",
+    "score": 95
+  },
+  {
+    "term": "Software deployment",
+    "topic": "Programming languages",
+    "score": 1
+  },
+  {
+    "term": "Software design",
+    "topic": "Programming languages",
+    "score": 114
+  },
+  {
+    "term": "Software development",
+    "topic": "Programming languages",
+    "score": 334
+  },
+  {
+    "term": "Software engineering",
+    "topic": "Programming languages",
+    "score": 46
+  },
+  {
+    "term": "Software framework",
+    "topic": "Programming languages",
+    "score": 11
+  },
+  {
+    "term": "Software maintenance",
+    "topic": "Programming languages",
+    "score": 64
+  },
+  {
+    "term": "Software quality",
+    "topic": "Programming languages",
+    "score": 114
+  },
+  {
+    "term": "Software repository",
+    "topic": "Programming languages",
+    "score": 4
+  },
+  {
+    "term": "Solid modeling",
+    "topic": "Programming languages",
+    "score": 78
+  },
+  {
+    "term": "Source code",
+    "topic": "Programming languages",
+    "score": 133
+  },
+  {
+    "term": "Specification language",
+    "topic": "Programming languages",
+    "score": 112
+  },
+  {
+    "term": "Standard ML",
+    "topic": "Programming languages",
+    "score": 121
+  },
+  {
+    "term": "Standard library",
+    "topic": "Programming languages",
+    "score": 172
+  },
+  {
+    "term": "Statement",
+    "topic": "Programming languages",
+    "score": 141
+  },
+  {
+    "term": "Static typing",
+    "topic": "Programming languages",
+    "score": 20
+  },
+  {
+    "term": "Statistics",
+    "topic": "Programming languages",
+    "score": 22
+  },
+  {
+    "term": "Stochastic computing",
+    "topic": "Programming languages",
+    "score": 12
+  },
+  {
+    "term": "String",
+    "topic": "Programming languages",
+    "score": 19
+  },
+  {
+    "term": "Subroutine",
+    "topic": "Programming languages",
+    "score": 1
+  },
+  {
+    "term": "Subtypes",
+    "topic": "Programming languages",
+    "score": 1
+  },
+  {
+    "term": "Superset",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Supervised learning",
+    "topic": "Programming languages",
+    "score": 64
+  },
+  {
+    "term": "Suresh Jagannathan",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Swift",
+    "topic": "Programming languages",
+    "score": 33
+  },
+  {
+    "term": "Syntax",
+    "topic": "Programming languages",
+    "score": 6
+  },
+  {
+    "term": "Syntax highlighting",
+    "topic": "Programming languages",
+    "score": 8
+  },
+  {
+    "term": "TIOBE index",
+    "topic": "Programming languages",
+    "score": 81
+  },
+  {
+    "term": "Transformation language",
+    "topic": "Programming languages",
+    "score": 129
+  },
+  {
+    "term": "Truth function",
+    "topic": "Programming languages",
+    "score": 239
+  },
+  {
+    "term": "Truth table",
+    "topic": "Programming languages",
+    "score": 324
+  },
+  {
+    "term": "Tuple",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Twos complement",
+    "topic": "Programming languages",
+    "score": 23
+  },
+  {
+    "term": "Type checking",
+    "topic": "Programming languages",
+    "score": 205
+  },
+  {
+    "term": "Type coercion",
+    "topic": "Programming languages",
+    "score": 204
+  },
+  {
+    "term": "Type compatibility",
+    "topic": "Programming languages",
+    "score": 200
+  },
+  {
+    "term": "Type conversion",
+    "topic": "Programming languages",
+    "score": 221
+  },
+  {
+    "term": "Type declaration",
+    "topic": "Programming languages",
+    "score": 224
+  },
+  {
+    "term": "Type equivalence",
+    "topic": "Programming languages",
+    "score": 204
+  },
+  {
+    "term": "Type error",
+    "topic": "Programming languages",
+    "score": 236
+  },
+  {
+    "term": "Type inference",
+    "topic": "Programming languages",
+    "score": 207
+  },
+  {
+    "term": "Type safety",
+    "topic": "Programming languages",
+    "score": 247
+  },
+  {
+    "term": "Type system",
+    "topic": "Programming languages",
+    "score": 616
+  },
+  {
+    "term": "Type theory",
+    "topic": "Programming languages",
+    "score": 329
+  },
+  {
+    "term": "Ubiquitous computing",
+    "topic": "Programming languages",
+    "score": 13
+  },
+  {
+    "term": "Undecidable problem",
+    "topic": "Programming languages",
+    "score": 313
+  },
+  {
+    "term": "Undefined behavior",
+    "topic": "Programming languages",
+    "score": 100
+  },
+  {
+    "term": "Union type",
+    "topic": "Programming languages",
+    "score": 382
+  },
+  {
+    "term": "Unity",
+    "topic": "Programming languages",
+    "score": 71
+  },
+  {
+    "term": "Unix shell",
+    "topic": "Programming languages",
+    "score": 22
+  },
+  {
+    "term": "Unreal Engine",
+    "topic": "Programming languages",
+    "score": 56
+  },
+  {
+    "term": "Unsupervised learning",
+    "topic": "Programming languages",
+    "score": 60
+  },
+  {
+    "term": "User-defined type",
+    "topic": "Programming languages",
+    "score": 200
+  },
+  {
+    "term": "VBScript",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Very-large-scale integration",
+    "topic": "Programming languages",
+    "score": 48
+  },
+  {
+    "term": "Video game",
+    "topic": "Programming languages",
+    "score": 125
+  },
+  {
+    "term": "Virtual machine",
+    "topic": "Programming languages",
+    "score": 108
+  },
+  {
+    "term": "Virtual reality",
+    "topic": "Programming languages",
+    "score": 84
+  },
+  {
+    "term": "Visual Basic",
+    "topic": "Programming languages",
+    "score": 211
+  },
+  {
+    "term": "Visualization",
+    "topic": "Programming languages",
+    "score": 1
+  },
+  {
+    "term": "Wayback Machine",
+    "topic": "Programming languages",
+    "score": 103
+  },
+  {
+    "term": "Weak typing",
+    "topic": "Programming languages",
+    "score": 39
+  },
+  {
+    "term": "Web pages",
+    "topic": "Programming languages",
+    "score": 37
+  },
+  {
+    "term": "Well-formedness",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Wolfram Language",
+    "topic": "Programming languages",
+    "score": 109
+  },
+  {
+    "term": "Word processor",
+    "topic": "Programming languages",
+    "score": 278
+  },
+  {
+    "term": "XNOR gate",
+    "topic": "Programming languages",
+    "score": 37
+  },
+  {
+    "term": "Zig",
+    "topic": "Programming languages",
+    "score": 0
+  },
+  {
+    "term": "Academic achievement",
+    "topic": "Computing",
+    "score": 121
+  },
+  {
+    "term": "Academic elitism",
+    "topic": "Computing",
+    "score": 56
+  },
+  {
+    "term": "Adam Smith",
+    "topic": "Computing",
+    "score": 98
+  },
+  {
+    "term": "Adaptation",
+    "topic": "Computing",
+    "score": 10
+  },
+  {
+    "term": "Adaptive value",
+    "topic": "Computing",
+    "score": 200
+  },
+  {
+    "term": "Agency",
+    "topic": "Computing",
+    "score": 56
+  },
+  {
+    "term": "Agent",
+    "topic": "Computing",
+    "score": 44
+  },
+  {
+    "term": "Alfie Kohn",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Alfred Sloan",
+    "topic": "Computing",
+    "score": 67
+  },
+  {
+    "term": "Allen Buchanan",
+    "topic": "Computing",
+    "score": 22
+  },
+  {
+    "term": "Anthropologist",
+    "topic": "Computing",
+    "score": 2
+  },
+  {
+    "term": "Anthropology",
+    "topic": "Computing",
+    "score": 7
+  },
+  {
+    "term": "Arms race",
+    "topic": "Computing",
+    "score": 224
+  },
+  {
+    "term": "Asymmetric competition",
+    "topic": "Computing",
+    "score": 65
+  },
+  {
+    "term": "Auction",
+    "topic": "Computing",
+    "score": 4
+  },
+  {
+    "term": "Bargaining",
+    "topic": "Computing",
+    "score": 18
+  },
+  {
+    "term": "Bibcode",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Biology",
+    "topic": "Computing",
+    "score": 7
+  },
+  {
+    "term": "Brand",
+    "topic": "Computing",
+    "score": 17
+  },
+  {
+    "term": "Brand manager",
+    "topic": "Computing",
+    "score": 105
+  },
+  {
+    "term": "Brinkmanship",
+    "topic": "Computing",
+    "score": 1
+  },
+  {
+    "term": "Business sector",
+    "topic": "Computing",
+    "score": 406
+  },
+  {
+    "term": "Business writer",
+    "topic": "Computing",
+    "score": 466
+  },
+  {
+    "term": "Carl Shapiro",
+    "topic": "Computing",
+    "score": 41
+  },
+  {
+    "term": "Cartel",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Celebrity",
+    "topic": "Computing",
+    "score": 3
+  },
+  {
+    "term": "Chevrolet",
+    "topic": "Computing",
+    "score": 4
+  },
+  {
+    "term": "Civilization",
+    "topic": "Computing",
+    "score": 42
+  },
+  {
+    "term": "Collective narcissism",
+    "topic": "Computing",
+    "score": 32
+  },
+  {
+    "term": "Compensation",
+    "topic": "Computing",
+    "score": 17
+  },
+  {
+    "term": "Compete",
+    "topic": "Computing",
+    "score": 23
+  },
+  {
+    "term": "Competition-based learning",
+    "topic": "Computing",
+    "score": 60
+  },
+  {
+    "term": "Competition",
+    "topic": "Computing",
+    "score": 63
+  },
+  {
+    "term": "Competition law",
+    "topic": "Computing",
+    "score": 362
+  },
+  {
+    "term": "Competition policy",
+    "topic": "Computing",
+    "score": 285
+  },
+  {
+    "term": "Competition regulator",
+    "topic": "Computing",
+    "score": 64
+  },
+  {
+    "term": "Competitor",
+    "topic": "Computing",
+    "score": 3
+  },
+  {
+    "term": "Competitor analysis",
+    "topic": "Computing",
+    "score": 111
+  },
+  {
+    "term": "Conflict theories",
+    "topic": "Computing",
+    "score": 72
+  },
+  {
+    "term": "Consumer",
+    "topic": "Computing",
+    "score": 38
+  },
+  {
+    "term": "Consumer welfare",
+    "topic": "Computing",
+    "score": 91
+  },
+  {
+    "term": "Cooperation",
+    "topic": "Computing",
+    "score": 39
+  },
+  {
+    "term": "Cost",
+    "topic": "Computing",
+    "score": 229
+  },
+  {
+    "term": "Country",
+    "topic": "Computing",
+    "score": 324
+  },
+  {
+    "term": "Culture",
+    "topic": "Computing",
+    "score": 58
+  },
+  {
+    "term": "Dark triad",
+    "topic": "Computing",
+    "score": 186
+  },
+  {
+    "term": "Discovery process",
+    "topic": "Computing",
+    "score": 241
+  },
+  {
+    "term": "Division",
+    "topic": "Computing",
+    "score": 107
+  },
+  {
+    "term": "Dozens",
+    "topic": "Computing",
+    "score": 11
+  },
+  {
+    "term": "Drew Fudenberg",
+    "topic": "Computing",
+    "score": 68
+  },
+  {
+    "term": "Duopoly",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Ecology",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Econometrics",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Economic mobility",
+    "topic": "Computing",
+    "score": 251
+  },
+  {
+    "term": "Economic model",
+    "topic": "Computing",
+    "score": 320
+  },
+  {
+    "term": "Economics",
+    "topic": "Computing",
+    "score": 17
+  },
+  {
+    "term": "Egomania",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Egotism",
+    "topic": "Computing",
+    "score": 3
+  },
+  {
+    "term": "Empathy",
+    "topic": "Computing",
+    "score": 1
+  },
+  {
+    "term": "English language",
+    "topic": "Computing",
+    "score": 304
+  },
+  {
+    "term": "Entitlement",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Evolutionary suicide",
+    "topic": "Computing",
+    "score": 21
+  },
+  {
+    "term": "Evolutionary theory",
+    "topic": "Computing",
+    "score": 133
+  },
+  {
+    "term": "Experimental economics",
+    "topic": "Computing",
+    "score": 55
+  },
+  {
+    "term": "Extinction",
+    "topic": "Computing",
+    "score": 3
+  },
+  {
+    "term": "Fair division",
+    "topic": "Computing",
+    "score": 185
+  },
+  {
+    "term": "Faruk Gul",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Finance",
+    "topic": "Computing",
+    "score": 31
+  },
+  {
+    "term": "Food",
+    "topic": "Computing",
+    "score": 147
+  },
+  {
+    "term": "Free market",
+    "topic": "Computing",
+    "score": 414
+  },
+  {
+    "term": "Gambit",
+    "topic": "Computing",
+    "score": 2
+  },
+  {
+    "term": "Game theory",
+    "topic": "Computing",
+    "score": 252
+  },
+  {
+    "term": "Gamesmanship",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "General equilibrium",
+    "topic": "Computing",
+    "score": 511
+  },
+  {
+    "term": "George Loewenstein",
+    "topic": "Computing",
+    "score": 129
+  },
+  {
+    "term": "Goal",
+    "topic": "Computing",
+    "score": 60
+  },
+  {
+    "term": "God complex",
+    "topic": "Computing",
+    "score": 407
+  },
+  {
+    "term": "Government-granted monopoly",
+    "topic": "Computing",
+    "score": 14
+  },
+  {
+    "term": "Government monopoly",
+    "topic": "Computing",
+    "score": 432
+  },
+  {
+    "term": "Government regulation",
+    "topic": "Computing",
+    "score": 432
+  },
+  {
+    "term": "Grandiosity",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Group dynamics",
+    "topic": "Computing",
+    "score": 394
+  },
+  {
+    "term": "Healthy narcissism",
+    "topic": "Computing",
+    "score": 33
+  },
+  {
+    "term": "History",
+    "topic": "Computing",
+    "score": 286
+  },
+  {
+    "term": "Hubris",
+    "topic": "Computing",
+    "score": 1
+  },
+  {
+    "term": "Human",
+    "topic": "Computing",
+    "score": 299
+  },
+  {
+    "term": "INSEAD",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Identity performance",
+    "topic": "Computing",
+    "score": 177
+  },
+  {
+    "term": "Imperfect competition",
+    "topic": "Computing",
+    "score": 67
+  },
+  {
+    "term": "Income",
+    "topic": "Computing",
+    "score": 109
+  },
+  {
+    "term": "Industrial organization",
+    "topic": "Computing",
+    "score": 271
+  },
+  {
+    "term": "Information economics",
+    "topic": "Computing",
+    "score": 286
+  },
+  {
+    "term": "Investor",
+    "topic": "Computing",
+    "score": 2
+  },
+  {
+    "term": "Jean Tirole",
+    "topic": "Computing",
+    "score": 23
+  },
+  {
+    "term": "Karl Marx",
+    "topic": "Computing",
+    "score": 17
+  },
+  {
+    "term": "Kenneth Arrow",
+    "topic": "Computing",
+    "score": 20
+  },
+  {
+    "term": "Law",
+    "topic": "Computing",
+    "score": 299
+  },
+  {
+    "term": "Leigh Tesfatsion",
+    "topic": "Computing",
+    "score": 3
+  },
+  {
+    "term": "License",
+    "topic": "Computing",
+    "score": 36
+  },
+  {
+    "term": "Mahatma Gandhi",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Malignant narcissism",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Management",
+    "topic": "Computing",
+    "score": 91
+  },
+  {
+    "term": "Manipulation",
+    "topic": "Computing",
+    "score": 7
+  },
+  {
+    "term": "Margaret Heffernan",
+    "topic": "Computing",
+    "score": 11
+  },
+  {
+    "term": "Market economy",
+    "topic": "Computing",
+    "score": 234
+  },
+  {
+    "term": "Market segment",
+    "topic": "Computing",
+    "score": 165
+  },
+  {
+    "term": "Martin Shubik",
+    "topic": "Computing",
+    "score": 55
+  },
+  {
+    "term": "Mathematical economics",
+    "topic": "Computing",
+    "score": 41
+  },
+  {
+    "term": "Mathematical model",
+    "topic": "Computing",
+    "score": 101
+  },
+  {
+    "term": "Matthew Rabin",
+    "topic": "Computing",
+    "score": 4
+  },
+  {
+    "term": "Me generation",
+    "topic": "Computing",
+    "score": 1236
+  },
+  {
+    "term": "Mechanism design",
+    "topic": "Computing",
+    "score": 142
+  },
+  {
+    "term": "Messiah complex",
+    "topic": "Computing",
+    "score": 93
+  },
+  {
+    "term": "Microeconomic theory",
+    "topic": "Computing",
+    "score": 129
+  },
+  {
+    "term": "Monopolistic competition",
+    "topic": "Computing",
+    "score": 65
+  },
+  {
+    "term": "Monopoly",
+    "topic": "Computing",
+    "score": 14
+  },
+  {
+    "term": "Narcissism",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Narcissistic defences",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Narcissistic elation",
+    "topic": "Computing",
+    "score": 2
+  },
+  {
+    "term": "Narcissistic injury",
+    "topic": "Computing",
+    "score": 27
+  },
+  {
+    "term": "Narcissistic leadership",
+    "topic": "Computing",
+    "score": 92
+  },
+  {
+    "term": "Narcissistic mortification",
+    "topic": "Computing",
+    "score": 1
+  },
+  {
+    "term": "Narcissistic neurosis",
+    "topic": "Computing",
+    "score": 6
+  },
+  {
+    "term": "Narcissistic parent",
+    "topic": "Computing",
+    "score": 15
+  },
+  {
+    "term": "Narcissistic supply",
+    "topic": "Computing",
+    "score": 102
+  },
+  {
+    "term": "Narcissistic withdrawal",
+    "topic": "Computing",
+    "score": 6
+  },
+  {
+    "term": "Narcissus",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Nash equilibrium",
+    "topic": "Computing",
+    "score": 13
+  },
+  {
+    "term": "Natural environment",
+    "topic": "Computing",
+    "score": 199
+  },
+  {
+    "term": "Natural selection",
+    "topic": "Computing",
+    "score": 195
+  },
+  {
+    "term": "Noam Nisan",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Non-zero-sum game",
+    "topic": "Computing",
+    "score": 123
+  },
+  {
+    "term": "OCLC",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Office politics",
+    "topic": "Computing",
+    "score": 324
+  },
+  {
+    "term": "Oligopoly",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "One-Upmanship",
+    "topic": "Computing",
+    "score": 1
+  },
+  {
+    "term": "Opportunism",
+    "topic": "Computing",
+    "score": 1
+  },
+  {
+    "term": "PMC",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Perfect competition",
+    "topic": "Computing",
+    "score": 121
+  },
+  {
+    "term": "Philosopher",
+    "topic": "Computing",
+    "score": 16
+  },
+  {
+    "term": "Poker",
+    "topic": "Computing",
+    "score": 6
+  },
+  {
+    "term": "Political economy",
+    "topic": "Computing",
+    "score": 337
+  },
+  {
+    "term": "Political science",
+    "topic": "Computing",
+    "score": 389
+  },
+  {
+    "term": "Polyethylene terephthalate",
+    "topic": "Computing",
+    "score": 4
+  },
+  {
+    "term": "Pontiac",
+    "topic": "Computing",
+    "score": 1
+  },
+  {
+    "term": "Power",
+    "topic": "Computing",
+    "score": 342
+  },
+  {
+    "term": "Price war",
+    "topic": "Computing",
+    "score": 572
+  },
+  {
+    "term": "Prisoner's dilemma",
+    "topic": "Computing",
+    "score": 46
+  },
+  {
+    "term": "Product",
+    "topic": "Computing",
+    "score": 87
+  },
+  {
+    "term": "Protectionist",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Psychologist",
+    "topic": "Computing",
+    "score": 10
+  },
+  {
+    "term": "Psychology",
+    "topic": "Computing",
+    "score": 14
+  },
+  {
+    "term": "Recognition",
+    "topic": "Computing",
+    "score": 44
+  },
+  {
+    "term": "Resource",
+    "topic": "Computing",
+    "score": 9
+  },
+  {
+    "term": "Reverse auction",
+    "topic": "Computing",
+    "score": 22
+  },
+  {
+    "term": "Richard Layard",
+    "topic": "Computing",
+    "score": 71
+  },
+  {
+    "term": "Rivalry",
+    "topic": "Computing",
+    "score": 6
+  },
+  {
+    "term": "Robert Aumann",
+    "topic": "Computing",
+    "score": 83
+  },
+  {
+    "term": "S2CID",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "SSRN",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Satire",
+    "topic": "Computing",
+    "score": 9
+  },
+  {
+    "term": "Scholarships",
+    "topic": "Computing",
+    "score": 8
+  },
+  {
+    "term": "Security dilemma",
+    "topic": "Computing",
+    "score": 116
+  },
+  {
+    "term": "Self-help",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Self-help book",
+    "topic": "Computing",
+    "score": 197
+  },
+  {
+    "term": "Selfishness",
+    "topic": "Computing",
+    "score": 1
+  },
+  {
+    "term": "Sergiu Hart",
+    "topic": "Computing",
+    "score": 13
+  },
+  {
+    "term": "Social interaction",
+    "topic": "Computing",
+    "score": 397
+  },
+  {
+    "term": "Social mobility",
+    "topic": "Computing",
+    "score": 388
+  },
+  {
+    "term": "Social network",
+    "topic": "Computing",
+    "score": 410
+  },
+  {
+    "term": "Social status",
+    "topic": "Computing",
+    "score": 477
+  },
+  {
+    "term": "Social stress",
+    "topic": "Computing",
+    "score": 487
+  },
+  {
+    "term": "Sociologist",
+    "topic": "Computing",
+    "score": 2
+  },
+  {
+    "term": "Sociology",
+    "topic": "Computing",
+    "score": 15
+  },
+  {
+    "term": "Solution concept",
+    "topic": "Computing",
+    "score": 144
+  },
+  {
+    "term": "Special education",
+    "topic": "Computing",
+    "score": 464
+  },
+  {
+    "term": "Stephen Potter",
+    "topic": "Computing",
+    "score": 22
+  },
+  {
+    "term": "Student competitions",
+    "topic": "Computing",
+    "score": 131
+  },
+  {
+    "term": "Subsidies",
+    "topic": "Computing",
+    "score": 3
+  },
+  {
+    "term": "Sunlight",
+    "topic": "Computing",
+    "score": 17
+  },
+  {
+    "term": "Superiority complex",
+    "topic": "Computing",
+    "score": 105
+  },
+  {
+    "term": "Superstar",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Sweepstakes",
+    "topic": "Computing",
+    "score": 2
+  },
+  {
+    "term": "Tariffs",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Territory",
+    "topic": "Computing",
+    "score": 31
+  },
+  {
+    "term": "TheGuardian.com",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Tongue-in-cheek",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "United States",
+    "topic": "Computing",
+    "score": 1085
+  },
+  {
+    "term": "Voting system",
+    "topic": "Computing",
+    "score": 446
+  },
+  {
+    "term": "Washington, D.C.",
+    "topic": "Computing",
+    "score": 212
+  },
+  {
+    "term": "Water",
+    "topic": "Computing",
+    "score": 445
+  },
+  {
+    "term": "Wealth",
+    "topic": "Computing",
+    "score": 22
+  },
+  {
+    "term": "Win-win game",
+    "topic": "Computing",
+    "score": 123
+  },
+  {
+    "term": "Winning streak",
+    "topic": "Computing",
+    "score": 41
+  },
+  {
+    "term": "X-inefficiency",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Zero-sum",
+    "topic": "Computing",
+    "score": 0
+  },
+  {
+    "term": "Zero-sum game",
+    "topic": "Computing",
+    "score": 123
+  },
+  {
+    "term": "ABET",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "ACM SIGSOFT",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "API",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "API management",
+    "topic": "Software engineering",
+    "score": 91
+  },
+  {
+    "term": "Acoustical engineering",
+    "topic": "Software engineering",
+    "score": 49
+  },
+  {
+    "term": "Active users",
+    "topic": "Software engineering",
+    "score": 94
+  },
+  {
+    "term": "Aerospace engineering",
+    "topic": "Software engineering",
+    "score": 50
+  },
+  {
+    "term": "Age wave",
+    "topic": "Software engineering",
+    "score": 273
+  },
+  {
+    "term": "Agricultural engineering",
+    "topic": "Software engineering",
+    "score": 84
+  },
+  {
+    "term": "Anomaly detection",
+    "topic": "Software engineering",
+    "score": 14
+  },
+  {
+    "term": "Application-release automation",
+    "topic": "Software engineering",
+    "score": 6
+  },
+  {
+    "term": "Application server",
+    "topic": "Software engineering",
+    "score": 68
+  },
+  {
+    "term": "Architectural engineering",
+    "topic": "Software engineering",
+    "score": 54
+  },
+  {
+    "term": "Architectures",
+    "topic": "Software engineering",
+    "score": 1
+  },
+  {
+    "term": "Aspect-oriented programming",
+    "topic": "Software engineering",
+    "score": 5
+  },
+  {
+    "term": "Asynchronous I/O",
+    "topic": "Software engineering",
+    "score": 1
+  },
+  {
+    "term": "Audio engineer",
+    "topic": "Software engineering",
+    "score": 44
+  },
+  {
+    "term": "Automation engineering",
+    "topic": "Software engineering",
+    "score": 52
+  },
+  {
+    "term": "Automotive engineering",
+    "topic": "Software engineering",
+    "score": 54
+  },
+  {
+    "term": "Availability",
+    "topic": "Software engineering",
+    "score": 21
+  },
+  {
+    "term": "Bachelor's degree",
+    "topic": "Software engineering",
+    "score": 129
+  },
+  {
+    "term": "Backward compatibility",
+    "topic": "Software engineering",
+    "score": 22
+  },
+  {
+    "term": "Bandwidth",
+    "topic": "Software engineering",
+    "score": 1
+  },
+  {
+    "term": "Barbara Grosz",
+    "topic": "Software engineering",
+    "score": 10
+  },
+  {
+    "term": "Barry Boehm",
+    "topic": "Software engineering",
+    "score": 3
+  },
+  {
+    "term": "Behavior-driven development",
+    "topic": "Software engineering",
+    "score": 334
+  },
+  {
+    "term": "Bernd Bruegge",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Biochemical engineering",
+    "topic": "Software engineering",
+    "score": 49
+  },
+  {
+    "term": "Bioinformatics",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Biological engineering",
+    "topic": "Software engineering",
+    "score": 66
+  },
+  {
+    "term": "Biomaterial",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Biomechanical engineering",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "Biomedical engineering",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "Bioresource engineering",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "Block-level storage",
+    "topic": "Software engineering",
+    "score": 41
+  },
+  {
+    "term": "Brian Randell",
+    "topic": "Software engineering",
+    "score": 5
+  },
+  {
+    "term": "Broadcast engineering",
+    "topic": "Software engineering",
+    "score": 62
+  },
+  {
+    "term": "Build automation",
+    "topic": "Software engineering",
+    "score": 92
+  },
+  {
+    "term": "Business process",
+    "topic": "Software engineering",
+    "score": 589
+  },
+  {
+    "term": "CAP theorem",
+    "topic": "Software engineering",
+    "score": 45
+  },
+  {
+    "term": "CI/CD",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Cache",
+    "topic": "Software engineering",
+    "score": 1
+  },
+  {
+    "term": "Cache prefetching",
+    "topic": "Software engineering",
+    "score": 1
+  },
+  {
+    "term": "Capacity planning",
+    "topic": "Software engineering",
+    "score": 212
+  },
+  {
+    "term": "Carnegie Mellon",
+    "topic": "Software engineering",
+    "score": 8
+  },
+  {
+    "term": "Ceramic engineering",
+    "topic": "Software engineering",
+    "score": 55
+  },
+  {
+    "term": "Chartered Engineer",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "Chemical engineering",
+    "topic": "Software engineering",
+    "score": 106
+  },
+  {
+    "term": "Chichester",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Civil engineering",
+    "topic": "Software engineering",
+    "score": 137
+  },
+  {
+    "term": "Clarkson University",
+    "topic": "Software engineering",
+    "score": 214
+  },
+  {
+    "term": "Client",
+    "topic": "Software engineering",
+    "score": 15
+  },
+  {
+    "term": "Client\u2013server model",
+    "topic": "Software engineering",
+    "score": 77
+  },
+  {
+    "term": "Climate engineering",
+    "topic": "Software engineering",
+    "score": 72
+  },
+  {
+    "term": "Clinical engineering",
+    "topic": "Software engineering",
+    "score": 73
+  },
+  {
+    "term": "Coastal engineering",
+    "topic": "Software engineering",
+    "score": 50
+  },
+  {
+    "term": "Codification",
+    "topic": "Software engineering",
+    "score": 3
+  },
+  {
+    "term": "Compatibility layer",
+    "topic": "Software engineering",
+    "score": 12
+  },
+  {
+    "term": "Compatibility mode",
+    "topic": "Software engineering",
+    "score": 21
+  },
+  {
+    "term": "Computer compatibility",
+    "topic": "Software engineering",
+    "score": 13
+  },
+  {
+    "term": "Computer configuration",
+    "topic": "Software engineering",
+    "score": 20
+  },
+  {
+    "term": "Computer engineering",
+    "topic": "Software engineering",
+    "score": 59
+  },
+  {
+    "term": "Computer performance",
+    "topic": "Software engineering",
+    "score": 135
+  },
+  {
+    "term": "Configuration management",
+    "topic": "Software engineering",
+    "score": 98
+  },
+  {
+    "term": "Consistency",
+    "topic": "Software engineering",
+    "score": 18
+  },
+  {
+    "term": "Consistent hashing",
+    "topic": "Software engineering",
+    "score": 28
+  },
+  {
+    "term": "Construction engineering",
+    "topic": "Software engineering",
+    "score": 141
+  },
+  {
+    "term": "Continuous delivery",
+    "topic": "Software engineering",
+    "score": 63
+  },
+  {
+    "term": "Continuous integration",
+    "topic": "Software engineering",
+    "score": 92
+  },
+  {
+    "term": "Control engineering",
+    "topic": "Software engineering",
+    "score": 269
+  },
+  {
+    "term": "Corrosion engineering",
+    "topic": "Software engineering",
+    "score": 50
+  },
+  {
+    "term": "Coursera",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Cybersecurity engineering",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "Data engineering",
+    "topic": "Software engineering",
+    "score": 219
+  },
+  {
+    "term": "Data model",
+    "topic": "Software engineering",
+    "score": 250
+  },
+  {
+    "term": "Data modeling",
+    "topic": "Software engineering",
+    "score": 174
+  },
+  {
+    "term": "Data orientation",
+    "topic": "Software engineering",
+    "score": 189
+  },
+  {
+    "term": "Database index",
+    "topic": "Software engineering",
+    "score": 81
+  },
+  {
+    "term": "David Parnas",
+    "topic": "Software engineering",
+    "score": 51
+  },
+  {
+    "term": "Debugger",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Debugging",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Decision-making",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Deployment management",
+    "topic": "Software engineering",
+    "score": 92
+  },
+  {
+    "term": "Derek Hitchins",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Design engineer",
+    "topic": "Software engineering",
+    "score": 156
+  },
+  {
+    "term": "Design review",
+    "topic": "Software engineering",
+    "score": 170
+  },
+  {
+    "term": "DevOps",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Developed world",
+    "topic": "Software engineering",
+    "score": 957
+  },
+  {
+    "term": "Doctorate",
+    "topic": "Software engineering",
+    "score": 1
+  },
+  {
+    "term": "Domain-driven design",
+    "topic": "Software engineering",
+    "score": 114
+  },
+  {
+    "term": "Donald Knuth",
+    "topic": "Software engineering",
+    "score": 20
+  },
+  {
+    "term": "Durability",
+    "topic": "Software engineering",
+    "score": 2
+  },
+  {
+    "term": "Earthquake engineering",
+    "topic": "Software engineering",
+    "score": 55
+  },
+  {
+    "term": "Ecological engineering",
+    "topic": "Software engineering",
+    "score": 48
+  },
+  {
+    "term": "Edge Computing",
+    "topic": "Software engineering",
+    "score": 89
+  },
+  {
+    "term": "Edsger Dijkstra",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Educator",
+    "topic": "Software engineering",
+    "score": 10
+  },
+  {
+    "term": "Electrical engineering",
+    "topic": "Software engineering",
+    "score": 92
+  },
+  {
+    "term": "Electrochemical engineering",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "Electromechanics",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Electronic engineering",
+    "topic": "Software engineering",
+    "score": 114
+  },
+  {
+    "term": "Empirical research",
+    "topic": "Software engineering",
+    "score": 194
+  },
+  {
+    "term": "Energy engineering",
+    "topic": "Software engineering",
+    "score": 146
+  },
+  {
+    "term": "Engineer",
+    "topic": "Software engineering",
+    "score": 42
+  },
+  {
+    "term": "Engineer's degree",
+    "topic": "Software engineering",
+    "score": 158
+  },
+  {
+    "term": "Engineering",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "Engineering drawing",
+    "topic": "Software engineering",
+    "score": 86
+  },
+  {
+    "term": "Engineering education",
+    "topic": "Software engineering",
+    "score": 260
+  },
+  {
+    "term": "Engineering management",
+    "topic": "Software engineering",
+    "score": 137
+  },
+  {
+    "term": "Engineering mathematics",
+    "topic": "Software engineering",
+    "score": 66
+  },
+  {
+    "term": "Engineering physics",
+    "topic": "Software engineering",
+    "score": 68
+  },
+  {
+    "term": "Enterprise architecture",
+    "topic": "Software engineering",
+    "score": 42
+  },
+  {
+    "term": "Entity\u2013relationship model",
+    "topic": "Software engineering",
+    "score": 77
+  },
+  {
+    "term": "Environmental engineering",
+    "topic": "Software engineering",
+    "score": 53
+  },
+  {
+    "term": "European Engineer",
+    "topic": "Software engineering",
+    "score": 103
+  },
+  {
+    "term": "Event-driven architecture",
+    "topic": "Software engineering",
+    "score": 11
+  },
+  {
+    "term": "Event store",
+    "topic": "Software engineering",
+    "score": 155
+  },
+  {
+    "term": "Executable UML",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Explosives engineering",
+    "topic": "Software engineering",
+    "score": 49
+  },
+  {
+    "term": "Externship",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Extreme programming",
+    "topic": "Software engineering",
+    "score": 67
+  },
+  {
+    "term": "Facilities engineering",
+    "topic": "Software engineering",
+    "score": 146
+  },
+  {
+    "term": "Failover",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Failure rate",
+    "topic": "Software engineering",
+    "score": 298
+  },
+  {
+    "term": "Feature-driven development",
+    "topic": "Software engineering",
+    "score": 334
+  },
+  {
+    "term": "Follow-the-sun",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Food engineering",
+    "topic": "Software engineering",
+    "score": 193
+  },
+  {
+    "term": "Forensic engineering",
+    "topic": "Software engineering",
+    "score": 53
+  },
+  {
+    "term": "Forward compatibility",
+    "topic": "Software engineering",
+    "score": 115
+  },
+  {
+    "term": "Frederick Brooks",
+    "topic": "Software engineering",
+    "score": 35
+  },
+  {
+    "term": "Freelancer",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Function model",
+    "topic": "Software engineering",
+    "score": 190
+  },
+  {
+    "term": "Functional requirement",
+    "topic": "Software engineering",
+    "score": 51
+  },
+  {
+    "term": "Functional specification",
+    "topic": "Software engineering",
+    "score": 27
+  },
+  {
+    "term": "GRPC",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Genetic engineering",
+    "topic": "Software engineering",
+    "score": 51
+  },
+  {
+    "term": "Geological engineering",
+    "topic": "Software engineering",
+    "score": 54
+  },
+  {
+    "term": "Geomatics engineering",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "Geotechnical engineering",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "Glossary",
+    "topic": "Software engineering",
+    "score": 3
+  },
+  {
+    "term": "Graduate certificate",
+    "topic": "Software engineering",
+    "score": 37
+  },
+  {
+    "term": "GraphQL",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Graph database",
+    "topic": "Software engineering",
+    "score": 17
+  },
+  {
+    "term": "Harlan Mills",
+    "topic": "Software engineering",
+    "score": 32
+  },
+  {
+    "term": "Harold Chestnut",
+    "topic": "Software engineering",
+    "score": 37
+  },
+  {
+    "term": "Health technology",
+    "topic": "Software engineering",
+    "score": 148
+  },
+  {
+    "term": "High-level design",
+    "topic": "Software engineering",
+    "score": 114
+  },
+  {
+    "term": "Hydraulic engineering",
+    "topic": "Software engineering",
+    "score": 47
+  },
+  {
+    "term": "IDEF",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "IEEE",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "IEEE Software",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "ISO",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "ISO/IEC 15504",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "ISO 9001",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "ITIL",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "IT security",
+    "topic": "Software engineering",
+    "score": 8851
+  },
+  {
+    "term": "Ian Sommerville",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Implementation",
+    "topic": "Software engineering",
+    "score": 8
+  },
+  {
+    "term": "Importance",
+    "topic": "Software engineering",
+    "score": 108
+  },
+  {
+    "term": "Industrial engineering",
+    "topic": "Software engineering",
+    "score": 189
+  },
+  {
+    "term": "Information engineering",
+    "topic": "Software engineering",
+    "score": 315
+  },
+  {
+    "term": "Information model",
+    "topic": "Software engineering",
+    "score": 346
+  },
+  {
+    "term": "Information science",
+    "topic": "Software engineering",
+    "score": 400
+  },
+  {
+    "term": "Information technology",
+    "topic": "Software engineering",
+    "score": 312
+  },
+  {
+    "term": "Instrumentation engineering",
+    "topic": "Software engineering",
+    "score": 50
+  },
+  {
+    "term": "Integration testing",
+    "topic": "Software engineering",
+    "score": 80
+  },
+  {
+    "term": "Interdisciplinarity",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Interface design",
+    "topic": "Software engineering",
+    "score": 117
+  },
+  {
+    "term": "Internship",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Jolt Award",
+    "topic": "Software engineering",
+    "score": 50
+  },
+  {
+    "term": "Kanban",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Kathleen Carley",
+    "topic": "Software engineering",
+    "score": 2
+  },
+  {
+    "term": "Katia Sycara",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Key\u2013value database",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Latency",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Legal",
+    "topic": "Software engineering",
+    "score": 72
+  },
+  {
+    "term": "Load balancing",
+    "topic": "Software engineering",
+    "score": 49
+  },
+  {
+    "term": "Log-structured merge-tree",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Logging",
+    "topic": "Software engineering",
+    "score": 5
+  },
+  {
+    "term": "Logistics engineering",
+    "topic": "Software engineering",
+    "score": 50
+  },
+  {
+    "term": "Loose coupling",
+    "topic": "Software engineering",
+    "score": 62
+  },
+  {
+    "term": "Manufacturing engineering",
+    "topic": "Software engineering",
+    "score": 70
+  },
+  {
+    "term": "Margaret Hamilton",
+    "topic": "Software engineering",
+    "score": 27
+  },
+  {
+    "term": "Marine engineering",
+    "topic": "Software engineering",
+    "score": 101
+  },
+  {
+    "term": "Master's degree",
+    "topic": "Software engineering",
+    "score": 149
+  },
+  {
+    "term": "Materials science",
+    "topic": "Software engineering",
+    "score": 228
+  },
+  {
+    "term": "Mechanical engineering",
+    "topic": "Software engineering",
+    "score": 80
+  },
+  {
+    "term": "Mechatronics",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Merriam-Webster",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Message queue",
+    "topic": "Software engineering",
+    "score": 64
+  },
+  {
+    "term": "Metallurgy",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Metamodeling",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Microservices",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Microwave engineering",
+    "topic": "Software engineering",
+    "score": 48
+  },
+  {
+    "term": "Middleware analyst",
+    "topic": "Software engineering",
+    "score": 7
+  },
+  {
+    "term": "Military engineering",
+    "topic": "Software engineering",
+    "score": 258
+  },
+  {
+    "term": "Military service",
+    "topic": "Software engineering",
+    "score": 527
+  },
+  {
+    "term": "Mining engineering",
+    "topic": "Software engineering",
+    "score": 58
+  },
+  {
+    "term": "Model-driven development",
+    "topic": "Software engineering",
+    "score": 334
+  },
+  {
+    "term": "Model-driven engineering",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "Modularity",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Molecular engineering",
+    "topic": "Software engineering",
+    "score": 63
+  },
+  {
+    "term": "Monolithic application",
+    "topic": "Software engineering",
+    "score": 69
+  },
+  {
+    "term": "NATO",
+    "topic": "Software engineering",
+    "score": 25
+  },
+  {
+    "term": "NCEES",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Nanotechnology",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Naval architecture",
+    "topic": "Software engineering",
+    "score": 44
+  },
+  {
+    "term": "NoSQL",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Non-functional requirement",
+    "topic": "Software engineering",
+    "score": 28
+  },
+  {
+    "term": "Notification system",
+    "topic": "Software engineering",
+    "score": 417
+  },
+  {
+    "term": "Nuclear engineering",
+    "topic": "Software engineering",
+    "score": 161
+  },
+  {
+    "term": "Obesity",
+    "topic": "Software engineering",
+    "score": 5
+  },
+  {
+    "term": "Object model",
+    "topic": "Software engineering",
+    "score": 142
+  },
+  {
+    "term": "Object storage",
+    "topic": "Software engineering",
+    "score": 106
+  },
+  {
+    "term": "Observability",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Offshore engineering",
+    "topic": "Software engineering",
+    "score": 49
+  },
+  {
+    "term": "Offshore outsourcing",
+    "topic": "Software engineering",
+    "score": 3
+  },
+  {
+    "term": "Ontology",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Ontology engineering",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "Open access",
+    "topic": "Software engineering",
+    "score": 342
+  },
+  {
+    "term": "Optical engineering",
+    "topic": "Software engineering",
+    "score": 65
+  },
+  {
+    "term": "Orchestration",
+    "topic": "Software engineering",
+    "score": 3
+  },
+  {
+    "term": "Packaging engineering",
+    "topic": "Software engineering",
+    "score": 53
+  },
+  {
+    "term": "Pair programming",
+    "topic": "Software engineering",
+    "score": 55
+  },
+  {
+    "term": "Pankaj Jalote",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Paper engineering",
+    "topic": "Software engineering",
+    "score": 203
+  },
+  {
+    "term": "Patch",
+    "topic": "Software engineering",
+    "score": 13
+  },
+  {
+    "term": "Peer-to-peer",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Performance engineering",
+    "topic": "Software engineering",
+    "score": 168
+  },
+  {
+    "term": "Petroleum engineering",
+    "topic": "Software engineering",
+    "score": 47
+  },
+  {
+    "term": "Pharmaceutical engineering",
+    "topic": "Software engineering",
+    "score": 48
+  },
+  {
+    "term": "Pittsburgh",
+    "topic": "Software engineering",
+    "score": 25
+  },
+  {
+    "term": "Polymer engineering",
+    "topic": "Software engineering",
+    "score": 47
+  },
+  {
+    "term": "Power engineering",
+    "topic": "Software engineering",
+    "score": 388
+  },
+  {
+    "term": "Privacy engineering",
+    "topic": "Software engineering",
+    "score": 58
+  },
+  {
+    "term": "Process engineering",
+    "topic": "Software engineering",
+    "score": 242
+  },
+  {
+    "term": "Professional Engineer",
+    "topic": "Software engineering",
+    "score": 147
+  },
+  {
+    "term": "Professional certification",
+    "topic": "Software engineering",
+    "score": 108
+  },
+  {
+    "term": "Profiling",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Program analysis",
+    "topic": "Software engineering",
+    "score": 502
+  },
+  {
+    "term": "Programming language",
+    "topic": "Software engineering",
+    "score": 114
+  },
+  {
+    "term": "Project management",
+    "topic": "Software engineering",
+    "score": 184
+  },
+  {
+    "term": "Publish\u2013subscribe pattern",
+    "topic": "Software engineering",
+    "score": 113
+  },
+  {
+    "term": "Quality assurance",
+    "topic": "Software engineering",
+    "score": 133
+  },
+  {
+    "term": "Quality management",
+    "topic": "Software engineering",
+    "score": 205
+  },
+  {
+    "term": "REST",
+    "topic": "Software engineering",
+    "score": 163
+  },
+  {
+    "term": "Radhika Nagpal",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Radio-frequency engineering",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "Railway engineering",
+    "topic": "Software engineering",
+    "score": 58
+  },
+  {
+    "term": "Rate limiting",
+    "topic": "Software engineering",
+    "score": 220
+  },
+  {
+    "term": "Rehabilitation engineering",
+    "topic": "Software engineering",
+    "score": 68
+  },
+  {
+    "term": "Relational database",
+    "topic": "Software engineering",
+    "score": 1
+  },
+  {
+    "term": "Release engineering",
+    "topic": "Software engineering",
+    "score": 83
+  },
+  {
+    "term": "Reliability engineering",
+    "topic": "Software engineering",
+    "score": 48
+  },
+  {
+    "term": "Replication",
+    "topic": "Software engineering",
+    "score": 1
+  },
+  {
+    "term": "Requirements",
+    "topic": "Software engineering",
+    "score": 83
+  },
+  {
+    "term": "Requirements engineering",
+    "topic": "Software engineering",
+    "score": 129
+  },
+  {
+    "term": "Research",
+    "topic": "Software engineering",
+    "score": 171
+  },
+  {
+    "term": "Researcher",
+    "topic": "Software engineering",
+    "score": 3
+  },
+  {
+    "term": "Rice University",
+    "topic": "Software engineering",
+    "score": 247
+  },
+  {
+    "term": "Risk management",
+    "topic": "Software engineering",
+    "score": 145
+  },
+  {
+    "term": "River engineering",
+    "topic": "Software engineering",
+    "score": 211
+  },
+  {
+    "term": "Robotics engineering",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "Robustness",
+    "topic": "Software engineering",
+    "score": 1
+  },
+  {
+    "term": "Round-trip engineering",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "Ruzena Bajcsy",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "SE2004",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "SEMAT",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "SOAP",
+    "topic": "Software engineering",
+    "score": 22
+  },
+  {
+    "term": "SWEBOK",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Safety engineering",
+    "topic": "Software engineering",
+    "score": 93
+  },
+  {
+    "term": "Sanitary engineering",
+    "topic": "Software engineering",
+    "score": 50
+  },
+  {
+    "term": "Scalability",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Scrum",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Seattle University",
+    "topic": "Software engineering",
+    "score": 221
+  },
+  {
+    "term": "Security engineering",
+    "topic": "Software engineering",
+    "score": 137
+  },
+  {
+    "term": "Security testing",
+    "topic": "Software engineering",
+    "score": 123
+  },
+  {
+    "term": "Semiconductor device",
+    "topic": "Software engineering",
+    "score": 55
+  },
+  {
+    "term": "Serverless computing",
+    "topic": "Software engineering",
+    "score": 11
+  },
+  {
+    "term": "Service-oriented architecture",
+    "topic": "Software engineering",
+    "score": 11
+  },
+  {
+    "term": "Shard",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Signal processing",
+    "topic": "Software engineering",
+    "score": 101
+  },
+  {
+    "term": "Simon Ramo",
+    "topic": "Software engineering",
+    "score": 4
+  },
+  {
+    "term": "Sitting",
+    "topic": "Software engineering",
+    "score": 96
+  },
+  {
+    "term": "Software",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Software archaeology",
+    "topic": "Software engineering",
+    "score": 11
+  },
+  {
+    "term": "Software architecture",
+    "topic": "Software engineering",
+    "score": 11
+  },
+  {
+    "term": "Software bloat",
+    "topic": "Software engineering",
+    "score": 8
+  },
+  {
+    "term": "Software craftsmanship",
+    "topic": "Software engineering",
+    "score": 5
+  },
+  {
+    "term": "Software crisis",
+    "topic": "Software engineering",
+    "score": 82
+  },
+  {
+    "term": "Software developer",
+    "topic": "Software engineering",
+    "score": 5
+  },
+  {
+    "term": "Software documentation",
+    "topic": "Software engineering",
+    "score": 3
+  },
+  {
+    "term": "Software incompatibility",
+    "topic": "Software engineering",
+    "score": 1
+  },
+  {
+    "term": "Software metric",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Software prototyping",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Software requirements",
+    "topic": "Software engineering",
+    "score": 83
+  },
+  {
+    "term": "Software system",
+    "topic": "Software engineering",
+    "score": 416
+  },
+  {
+    "term": "Software testing",
+    "topic": "Software engineering",
+    "score": 32
+  },
+  {
+    "term": "Spare part",
+    "topic": "Software engineering",
+    "score": 523
+  },
+  {
+    "term": "Spiral model",
+    "topic": "Software engineering",
+    "score": 85
+  },
+  {
+    "term": "Sports engineering",
+    "topic": "Software engineering",
+    "score": 95
+  },
+  {
+    "term": "Stand-up meeting",
+    "topic": "Software engineering",
+    "score": 159
+  },
+  {
+    "term": "Stanford torus",
+    "topic": "Software engineering",
+    "score": 1
+  },
+  {
+    "term": "Steve McConnell",
+    "topic": "Software engineering",
+    "score": 5
+  },
+  {
+    "term": "Stevens Award",
+    "topic": "Software engineering",
+    "score": 64
+  },
+  {
+    "term": "Stream processing",
+    "topic": "Software engineering",
+    "score": 89
+  },
+  {
+    "term": "Structural engineering",
+    "topic": "Software engineering",
+    "score": 71
+  },
+  {
+    "term": "Structured analysis",
+    "topic": "Software engineering",
+    "score": 122
+  },
+  {
+    "term": "Surface engineering",
+    "topic": "Software engineering",
+    "score": 246
+  },
+  {
+    "term": "Survey engineering",
+    "topic": "Software engineering",
+    "score": 83
+  },
+  {
+    "term": "Sustainability",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Sustainable engineering",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "System",
+    "topic": "Software engineering",
+    "score": 416
+  },
+  {
+    "term": "System Integration",
+    "topic": "Software engineering",
+    "score": 464
+  },
+  {
+    "term": "System dynamics",
+    "topic": "Software engineering",
+    "score": 420
+  },
+  {
+    "term": "System lifecycle",
+    "topic": "Software engineering",
+    "score": 416
+  },
+  {
+    "term": "System testing",
+    "topic": "Software engineering",
+    "score": 448
+  },
+  {
+    "term": "Systems Engineering",
+    "topic": "Software engineering",
+    "score": 175
+  },
+  {
+    "term": "Systems analysis",
+    "topic": "Software engineering",
+    "score": 237
+  },
+  {
+    "term": "Systems analyst",
+    "topic": "Software engineering",
+    "score": 136
+  },
+  {
+    "term": "Systems architect",
+    "topic": "Software engineering",
+    "score": 151
+  },
+  {
+    "term": "Systems design",
+    "topic": "Software engineering",
+    "score": 243
+  },
+  {
+    "term": "Systems modeling",
+    "topic": "Software engineering",
+    "score": 130
+  },
+  {
+    "term": "Technical support",
+    "topic": "Software engineering",
+    "score": 300
+  },
+  {
+    "term": "Telecommunications engineering",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "Test-driven development",
+    "topic": "Software engineering",
+    "score": 334
+  },
+  {
+    "term": "Test engineers",
+    "topic": "Software engineering",
+    "score": 152
+  },
+  {
+    "term": "Textile engineering",
+    "topic": "Software engineering",
+    "score": 74
+  },
+  {
+    "term": "The Atlantic",
+    "topic": "Software engineering",
+    "score": 70011
+  },
+  {
+    "term": "Theory",
+    "topic": "Software engineering",
+    "score": 129
+  },
+  {
+    "term": "Thermal engineering",
+    "topic": "Software engineering",
+    "score": 79
+  },
+  {
+    "term": "Thrombosis prevention",
+    "topic": "Software engineering",
+    "score": 28
+  },
+  {
+    "term": "Tissue engineering",
+    "topic": "Software engineering",
+    "score": 87
+  },
+  {
+    "term": "Tracing",
+    "topic": "Software engineering",
+    "score": 17
+  },
+  {
+    "term": "Traffic engineering",
+    "topic": "Software engineering",
+    "score": 114
+  },
+  {
+    "term": "Transportation engineering",
+    "topic": "Software engineering",
+    "score": 89
+  },
+  {
+    "term": "Tribology",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Turing Award",
+    "topic": "Software engineering",
+    "score": 46
+  },
+  {
+    "term": "UML tool",
+    "topic": "Software engineering",
+    "score": 40
+  },
+  {
+    "term": "UQAM",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Unified process",
+    "topic": "Software engineering",
+    "score": 207
+  },
+  {
+    "term": "Unit testing",
+    "topic": "Software engineering",
+    "score": 135
+  },
+  {
+    "term": "User experience",
+    "topic": "Software engineering",
+    "score": 280
+  },
+  {
+    "term": "V-model",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Vertical integration",
+    "topic": "Software engineering",
+    "score": 64
+  },
+  {
+    "term": "View model",
+    "topic": "Software engineering",
+    "score": 263
+  },
+  {
+    "term": "Waterfall model",
+    "topic": "Software engineering",
+    "score": 79
+  },
+  {
+    "term": "Watts Humphrey",
+    "topic": "Software engineering",
+    "score": 6
+  },
+  {
+    "term": "Web traffic",
+    "topic": "Software engineering",
+    "score": 74
+  },
+  {
+    "term": "Webhook",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "Wiley",
+    "topic": "Software engineering",
+    "score": 6
+  },
+  {
+    "term": "Wolt Fabrycky",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "YouTube",
+    "topic": "Software engineering",
+    "score": 0
+  },
+  {
+    "term": "A.A. Markov",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Ada Lovelace",
+    "topic": "Algorithms",
+    "score": 18
+  },
+  {
+    "term": "Al-Khwarizmi",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Al-Kindi",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Alan Turing",
+    "topic": "Algorithms",
+    "score": 5
+  },
+  {
+    "term": "Algebraic structure",
+    "topic": "Algorithms",
+    "score": 92
+  },
+  {
+    "term": "Algorism",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Algorithm aversion",
+    "topic": "Algorithms",
+    "score": 3
+  },
+  {
+    "term": "Algorithm characterizations",
+    "topic": "Algorithms",
+    "score": 3
+  },
+  {
+    "term": "Algorithm engineering",
+    "topic": "Algorithms",
+    "score": 47
+  },
+  {
+    "term": "Algorithmic bias",
+    "topic": "Algorithms",
+    "score": 8
+  },
+  {
+    "term": "Algorithmic composition",
+    "topic": "Algorithms",
+    "score": 25
+  },
+  {
+    "term": "Algorithmic entities",
+    "topic": "Algorithms",
+    "score": 11
+  },
+  {
+    "term": "Algorithmic paradigm",
+    "topic": "Algorithms",
+    "score": 6
+  },
+  {
+    "term": "Algorithmic synthesis",
+    "topic": "Algorithms",
+    "score": 16
+  },
+  {
+    "term": "Algorithmic technique",
+    "topic": "Algorithms",
+    "score": 60
+  },
+  {
+    "term": "Algorithmic topology",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Alonzo Church",
+    "topic": "Algorithms",
+    "score": 348
+  },
+  {
+    "term": "Analytical engine",
+    "topic": "Algorithms",
+    "score": 59
+  },
+  {
+    "term": "Analytical mechanics",
+    "topic": "Algorithms",
+    "score": 28
+  },
+  {
+    "term": "Ancrene Wisse",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Andreas Blass",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Andrew Hodges",
+    "topic": "Algorithms",
+    "score": 26
+  },
+  {
+    "term": "Applied mathematics",
+    "topic": "Algorithms",
+    "score": 126
+  },
+  {
+    "term": "Approximation algorithm",
+    "topic": "Algorithms",
+    "score": 8
+  },
+  {
+    "term": "Approximation theory",
+    "topic": "Algorithms",
+    "score": 136
+  },
+  {
+    "term": "Arabic mathematics",
+    "topic": "Algorithms",
+    "score": 26
+  },
+  {
+    "term": "Arithmetic",
+    "topic": "Algorithms",
+    "score": 8
+  },
+  {
+    "term": "Arthur Zimek",
+    "topic": "Algorithms",
+    "score": 51
+  },
+  {
+    "term": "Asger Aaboe",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Assembly code",
+    "topic": "Algorithms",
+    "score": 89
+  },
+  {
+    "term": "Associative array",
+    "topic": "Algorithms",
+    "score": 11
+  },
+  {
+    "term": "Asymptotically optimal",
+    "topic": "Algorithms",
+    "score": 29
+  },
+  {
+    "term": "Automated decision-making",
+    "topic": "Algorithms",
+    "score": 2
+  },
+  {
+    "term": "Automated reasoning",
+    "topic": "Algorithms",
+    "score": 18
+  },
+  {
+    "term": "Babbage",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Babylonia",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Babylonian astronomy",
+    "topic": "Algorithms",
+    "score": 26
+  },
+  {
+    "term": "Babylonian mathematics",
+    "topic": "Algorithms",
+    "score": 22
+  },
+  {
+    "term": "Back tracking",
+    "topic": "Algorithms",
+    "score": 969
+  },
+  {
+    "term": "Backtracking",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Baghdad",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Baudot code",
+    "topic": "Algorithms",
+    "score": 39
+  },
+  {
+    "term": "Benchmark",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Beyond Creation",
+    "topic": "Algorithms",
+    "score": 221
+  },
+  {
+    "term": "Binary search",
+    "topic": "Algorithms",
+    "score": 66
+  },
+  {
+    "term": "Breadth-first search",
+    "topic": "Algorithms",
+    "score": 66
+  },
+  {
+    "term": "Brute-force search",
+    "topic": "Algorithms",
+    "score": 66
+  },
+  {
+    "term": "Br\u0101hmasphu\u1e6dasiddh\u0101nta",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Bureaucratic",
+    "topic": "Algorithms",
+    "score": 3
+  },
+  {
+    "term": "Calculation",
+    "topic": "Algorithms",
+    "score": 12
+  },
+  {
+    "term": "Calculator",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Chaos theory",
+    "topic": "Algorithms",
+    "score": 146
+  },
+  {
+    "term": "Charles Babbage",
+    "topic": "Algorithms",
+    "score": 96
+  },
+  {
+    "term": "Chess",
+    "topic": "Algorithms",
+    "score": 3
+  },
+  {
+    "term": "Chinese mathematics",
+    "topic": "Algorithms",
+    "score": 76
+  },
+  {
+    "term": "Church thesis",
+    "topic": "Algorithms",
+    "score": 358
+  },
+  {
+    "term": "Church\u2013Turing thesis",
+    "topic": "Algorithms",
+    "score": 10
+  },
+  {
+    "term": "CiteSeerX",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Claude Shannon",
+    "topic": "Algorithms",
+    "score": 12
+  },
+  {
+    "term": "Clifford algebra",
+    "topic": "Algorithms",
+    "score": 7
+  },
+  {
+    "term": "Clifford analysis",
+    "topic": "Algorithms",
+    "score": 113
+  },
+  {
+    "term": "Coding theory",
+    "topic": "Algorithms",
+    "score": 132
+  },
+  {
+    "term": "Combinatorics",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Computation",
+    "topic": "Algorithms",
+    "score": 7
+  },
+  {
+    "term": "Computational problem",
+    "topic": "Algorithms",
+    "score": 314
+  },
+  {
+    "term": "Computational statistics",
+    "topic": "Algorithms",
+    "score": 23
+  },
+  {
+    "term": "Computer algebra",
+    "topic": "Algorithms",
+    "score": 15
+  },
+  {
+    "term": "Conditional",
+    "topic": "Algorithms",
+    "score": 3
+  },
+  {
+    "term": "Constraint programming",
+    "topic": "Algorithms",
+    "score": 7
+  },
+  {
+    "term": "Control table",
+    "topic": "Algorithms",
+    "score": 421
+  },
+  {
+    "term": "Convex polytope",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Cookbook",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Cris Moore",
+    "topic": "Algorithms",
+    "score": 25
+  },
+  {
+    "term": "Cryptanalysis",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "DRAKON",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Daniel Dennett",
+    "topic": "Algorithms",
+    "score": 14
+  },
+  {
+    "term": "Data compression",
+    "topic": "Algorithms",
+    "score": 181
+  },
+  {
+    "term": "Data processing",
+    "topic": "Algorithms",
+    "score": 211
+  },
+  {
+    "term": "David Hilbert",
+    "topic": "Algorithms",
+    "score": 51
+  },
+  {
+    "term": "Decision theory",
+    "topic": "Algorithms",
+    "score": 248
+  },
+  {
+    "term": "Depth-first search",
+    "topic": "Algorithms",
+    "score": 66
+  },
+  {
+    "term": "Deterministic",
+    "topic": "Algorithms",
+    "score": 7
+  },
+  {
+    "term": "Deterministic algorithm",
+    "topic": "Algorithms",
+    "score": 8
+  },
+  {
+    "term": "Difference engine",
+    "topic": "Algorithms",
+    "score": 198
+  },
+  {
+    "term": "Differential equation",
+    "topic": "Algorithms",
+    "score": 49
+  },
+  {
+    "term": "Differential form",
+    "topic": "Algorithms",
+    "score": 386
+  },
+  {
+    "term": "Differential geometry",
+    "topic": "Algorithms",
+    "score": 25
+  },
+  {
+    "term": "Discrete geometry",
+    "topic": "Algorithms",
+    "score": 16
+  },
+  {
+    "term": "Distributed algorithm",
+    "topic": "Algorithms",
+    "score": 28
+  },
+  {
+    "term": "Divide-and-conquer algorithm",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Division algorithm",
+    "topic": "Algorithms",
+    "score": 108
+  },
+  {
+    "term": "Dynamic programming",
+    "topic": "Algorithms",
+    "score": 26
+  },
+  {
+    "term": "Dynamical system",
+    "topic": "Algorithms",
+    "score": 417
+  },
+  {
+    "term": "Effective calculability",
+    "topic": "Algorithms",
+    "score": 129
+  },
+  {
+    "term": "Effective method",
+    "topic": "Algorithms",
+    "score": 271
+  },
+  {
+    "term": "Egyptian mathematics",
+    "topic": "Algorithms",
+    "score": 25
+  },
+  {
+    "term": "Electrical circuit",
+    "topic": "Algorithms",
+    "score": 69
+  },
+  {
+    "term": "Emil Post",
+    "topic": "Algorithms",
+    "score": 86
+  },
+  {
+    "term": "Empirical algorithmics",
+    "topic": "Algorithms",
+    "score": 23
+  },
+  {
+    "term": "Empty string",
+    "topic": "Algorithms",
+    "score": 83
+  },
+  {
+    "term": "Entscheidungsproblem",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Euclid's Elements",
+    "topic": "Algorithms",
+    "score": 107
+  },
+  {
+    "term": "Euclidean algorithm",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Exterior algebra",
+    "topic": "Algorithms",
+    "score": 10
+  },
+  {
+    "term": "Exterior calculus",
+    "topic": "Algorithms",
+    "score": 8
+  },
+  {
+    "term": "Feedback",
+    "topic": "Algorithms",
+    "score": 4
+  },
+  {
+    "term": "Fenwick tree",
+    "topic": "Algorithms",
+    "score": 60
+  },
+  {
+    "term": "Field theory",
+    "topic": "Algorithms",
+    "score": 403
+  },
+  {
+    "term": "Finite-state machine",
+    "topic": "Algorithms",
+    "score": 103
+  },
+  {
+    "term": "Flowchart",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Floyd\u2013Warshall algorithm",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Fold",
+    "topic": "Algorithms",
+    "score": 7
+  },
+  {
+    "term": "Formulation 1",
+    "topic": "Algorithms",
+    "score": 17
+  },
+  {
+    "term": "Fourier analysis",
+    "topic": "Algorithms",
+    "score": 108
+  },
+  {
+    "term": "Frequency analysis",
+    "topic": "Algorithms",
+    "score": 130
+  },
+  {
+    "term": "Function",
+    "topic": "Algorithms",
+    "score": 113
+  },
+  {
+    "term": "Functional analysis",
+    "topic": "Algorithms",
+    "score": 132
+  },
+  {
+    "term": "Functional integration",
+    "topic": "Algorithms",
+    "score": 72
+  },
+  {
+    "term": "Gauge theory",
+    "topic": "Algorithms",
+    "score": 141
+  },
+  {
+    "term": "Genetic algorithm",
+    "topic": "Algorithms",
+    "score": 6
+  },
+  {
+    "term": "Geoffrey Chaucer",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Geometric algebra",
+    "topic": "Algorithms",
+    "score": 19
+  },
+  {
+    "term": "Geometric analysis",
+    "topic": "Algorithms",
+    "score": 125
+  },
+  {
+    "term": "Geometric calculus",
+    "topic": "Algorithms",
+    "score": 17
+  },
+  {
+    "term": "Georg Cantor",
+    "topic": "Algorithms",
+    "score": 2
+  },
+  {
+    "term": "George Boole",
+    "topic": "Algorithms",
+    "score": 129
+  },
+  {
+    "term": "George Boolos",
+    "topic": "Algorithms",
+    "score": 129
+  },
+  {
+    "term": "George Stibitz",
+    "topic": "Algorithms",
+    "score": 129
+  },
+  {
+    "term": "Gottfried Leibniz",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Gottlob Frege",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Graph",
+    "topic": "Algorithms",
+    "score": 17
+  },
+  {
+    "term": "Graph theory",
+    "topic": "Algorithms",
+    "score": 146
+  },
+  {
+    "term": "Graph traversal",
+    "topic": "Algorithms",
+    "score": 17
+  },
+  {
+    "term": "Greedy algorithm",
+    "topic": "Algorithms",
+    "score": 6
+  },
+  {
+    "term": "Greek mathematics",
+    "topic": "Algorithms",
+    "score": 81
+  },
+  {
+    "term": "G\u00f6del",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Hamiltonian mechanics",
+    "topic": "Algorithms",
+    "score": 20
+  },
+  {
+    "term": "Hans-Peter Kriegel",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Harmonic analysis",
+    "topic": "Algorithms",
+    "score": 110
+  },
+  {
+    "term": "Hash function",
+    "topic": "Algorithms",
+    "score": 114
+  },
+  {
+    "term": "Hash table",
+    "topic": "Algorithms",
+    "score": 199
+  },
+  {
+    "term": "Hdl",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Hellenistic mathematics",
+    "topic": "Algorithms",
+    "score": 20
+  },
+  {
+    "term": "Heuristic",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Heuristic algorithm",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Heuristics",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Hollerith card",
+    "topic": "Algorithms",
+    "score": 26
+  },
+  {
+    "term": "Howard Aiken",
+    "topic": "Algorithms",
+    "score": 33
+  },
+  {
+    "term": "Huffman coding",
+    "topic": "Algorithms",
+    "score": 4
+  },
+  {
+    "term": "Human brain",
+    "topic": "Algorithms",
+    "score": 344
+  },
+  {
+    "term": "Indian mathematics",
+    "topic": "Algorithms",
+    "score": 72
+  },
+  {
+    "term": "Inference",
+    "topic": "Algorithms",
+    "score": 7
+  },
+  {
+    "term": "Infinite loop",
+    "topic": "Algorithms",
+    "score": 40
+  },
+  {
+    "term": "Integer programming",
+    "topic": "Algorithms",
+    "score": 9
+  },
+  {
+    "term": "Jacquard loom",
+    "topic": "Algorithms",
+    "score": 6
+  },
+  {
+    "term": "Jacques Herbrand",
+    "topic": "Algorithms",
+    "score": 8
+  },
+  {
+    "term": "Joseph-Marie Jacquard",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Judith Grabiner",
+    "topic": "Algorithms",
+    "score": 4
+  },
+  {
+    "term": "Kleene",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Knapsack problem",
+    "topic": "Algorithms",
+    "score": 313
+  },
+  {
+    "term": "Kruskal's algorithm",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Kurt G\u00f6del",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Lagrangian mechanics",
+    "topic": "Algorithms",
+    "score": 19
+  },
+  {
+    "term": "Lambda calculus",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Linear programming",
+    "topic": "Algorithms",
+    "score": 26
+  },
+  {
+    "term": "Linked list",
+    "topic": "Algorithms",
+    "score": 149
+  },
+  {
+    "term": "Local optimum",
+    "topic": "Algorithms",
+    "score": 304
+  },
+  {
+    "term": "Local search",
+    "topic": "Algorithms",
+    "score": 354
+  },
+  {
+    "term": "Lookup table",
+    "topic": "Algorithms",
+    "score": 205
+  },
+  {
+    "term": "Malliavin calculus",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Martin Davis",
+    "topic": "Algorithms",
+    "score": 82
+  },
+  {
+    "term": "Marvin Minsky",
+    "topic": "Algorithms",
+    "score": 9
+  },
+  {
+    "term": "MathWorld",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Mathematical chemistry",
+    "topic": "Algorithms",
+    "score": 40
+  },
+  {
+    "term": "Mathematical finance",
+    "topic": "Algorithms",
+    "score": 55
+  },
+  {
+    "term": "Mathematical induction",
+    "topic": "Algorithms",
+    "score": 30
+  },
+  {
+    "term": "Mathematical physics",
+    "topic": "Algorithms",
+    "score": 46
+  },
+  {
+    "term": "Mathematical psychology",
+    "topic": "Algorithms",
+    "score": 38
+  },
+  {
+    "term": "Mathematical sociology",
+    "topic": "Algorithms",
+    "score": 39
+  },
+  {
+    "term": "Mathematics",
+    "topic": "Algorithms",
+    "score": 20
+  },
+  {
+    "term": "Memoization",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Mergesort",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Mesopotamia",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Minimax",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Multilinear algebra",
+    "topic": "Algorithms",
+    "score": 2
+  },
+  {
+    "term": "Multivariable calculus",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "NIST",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Natural languages",
+    "topic": "Algorithms",
+    "score": 196
+  },
+  {
+    "term": "Nicomachus",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Non-deterministic algorithm",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Note G",
+    "topic": "Algorithms",
+    "score": 143
+  },
+  {
+    "term": "Online algorithm",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Operation research",
+    "topic": "Algorithms",
+    "score": 284
+  },
+  {
+    "term": "Operator algebra",
+    "topic": "Algorithms",
+    "score": 51
+  },
+  {
+    "term": "Operator theory",
+    "topic": "Algorithms",
+    "score": 178
+  },
+  {
+    "term": "Optimization problem",
+    "topic": "Algorithms",
+    "score": 314
+  },
+  {
+    "term": "Overlapping subproblem",
+    "topic": "Algorithms",
+    "score": 3
+  },
+  {
+    "term": "P",
+    "topic": "Algorithms",
+    "score": 76
+  },
+  {
+    "term": "Parallel algorithm",
+    "topic": "Algorithms",
+    "score": 41
+  },
+  {
+    "term": "Perturbation theory",
+    "topic": "Algorithms",
+    "score": 130
+  },
+  {
+    "term": "Pidgin code",
+    "topic": "Algorithms",
+    "score": 41
+  },
+  {
+    "term": "Piotr Indyk",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Poisson algebra",
+    "topic": "Algorithms",
+    "score": 2
+  },
+  {
+    "term": "Polynomial time",
+    "topic": "Algorithms",
+    "score": 1626
+  },
+  {
+    "term": "Potential theory",
+    "topic": "Algorithms",
+    "score": 196
+  },
+  {
+    "term": "Praeger Publishers",
+    "topic": "Algorithms",
+    "score": 11
+  },
+  {
+    "term": "Prim's algorithm",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Probability distribution",
+    "topic": "Algorithms",
+    "score": 120
+  },
+  {
+    "term": "Probability theory",
+    "topic": "Algorithms",
+    "score": 164
+  },
+  {
+    "term": "Program loops",
+    "topic": "Algorithms",
+    "score": 395
+  },
+  {
+    "term": "Program optimization",
+    "topic": "Algorithms",
+    "score": 395
+  },
+  {
+    "term": "Programming languages",
+    "topic": "Algorithms",
+    "score": 45
+  },
+  {
+    "term": "Quantity",
+    "topic": "Algorithms",
+    "score": 33
+  },
+  {
+    "term": "Quantum algorithm",
+    "topic": "Algorithms",
+    "score": 6
+  },
+  {
+    "term": "Quantum computation",
+    "topic": "Algorithms",
+    "score": 12
+  },
+  {
+    "term": "Quantum entanglement",
+    "topic": "Algorithms",
+    "score": 6
+  },
+  {
+    "term": "Quantum group",
+    "topic": "Algorithms",
+    "score": 395
+  },
+  {
+    "term": "Quantum superposition",
+    "topic": "Algorithms",
+    "score": 6
+  },
+  {
+    "term": "Queue",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "RP",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Random variable",
+    "topic": "Algorithms",
+    "score": 74
+  },
+  {
+    "term": "Randomness",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Recipe",
+    "topic": "Algorithms",
+    "score": 8
+  },
+  {
+    "term": "Recommender system",
+    "topic": "Algorithms",
+    "score": 416
+  },
+  {
+    "term": "Recursive algorithm",
+    "topic": "Algorithms",
+    "score": 2
+  },
+  {
+    "term": "Reduction",
+    "topic": "Algorithms",
+    "score": 42
+  },
+  {
+    "term": "Relays",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Renormalization group",
+    "topic": "Algorithms",
+    "score": 390
+  },
+  {
+    "term": "Richard Jeffrey",
+    "topic": "Algorithms",
+    "score": 71
+  },
+  {
+    "term": "Rigour",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Robert Kowalski",
+    "topic": "Algorithms",
+    "score": 101
+  },
+  {
+    "term": "Roberto Simanowski",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Roberto Tamassia",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Root-finding algorithm",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Search algorithm",
+    "topic": "Algorithms",
+    "score": 67
+  },
+  {
+    "term": "Segment tree",
+    "topic": "Algorithms",
+    "score": 69
+  },
+  {
+    "term": "Selection algorithm",
+    "topic": "Algorithms",
+    "score": 40
+  },
+  {
+    "term": "Shulba Sutras",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Shuruppak",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Simplex algorithm",
+    "topic": "Algorithms",
+    "score": 2
+  },
+  {
+    "term": "Simulated annealing",
+    "topic": "Algorithms",
+    "score": 7
+  },
+  {
+    "term": "Software patent",
+    "topic": "Algorithms",
+    "score": 35
+  },
+  {
+    "term": "Sollin's algorithm",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Solver",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Sorting algorithm",
+    "topic": "Algorithms",
+    "score": 2
+  },
+  {
+    "term": "Spacetime algebra",
+    "topic": "Algorithms",
+    "score": 2
+  },
+  {
+    "term": "Spaghetti code",
+    "topic": "Algorithms",
+    "score": 40
+  },
+  {
+    "term": "Stack",
+    "topic": "Algorithms",
+    "score": 9
+  },
+  {
+    "term": "Stanford University",
+    "topic": "Algorithms",
+    "score": 215
+  },
+  {
+    "term": "State-transition table",
+    "topic": "Algorithms",
+    "score": 198
+  },
+  {
+    "term": "State diagram",
+    "topic": "Algorithms",
+    "score": 817
+  },
+  {
+    "term": "Stephen Kleene",
+    "topic": "Algorithms",
+    "score": 18
+  },
+  {
+    "term": "Stochastic calculus",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Stochastic process",
+    "topic": "Algorithms",
+    "score": 197
+  },
+  {
+    "term": "Streaming algorithm",
+    "topic": "Algorithms",
+    "score": 8
+  },
+  {
+    "term": "String-searching algorithm",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "String theory",
+    "topic": "Algorithms",
+    "score": 148
+  },
+  {
+    "term": "Sumer",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Superalgebra",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Supersymmetry",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Supersymmetry algebra",
+    "topic": "Algorithms",
+    "score": 2
+  },
+  {
+    "term": "Synthetic rubber",
+    "topic": "Algorithms",
+    "score": 27
+  },
+  {
+    "term": "Tabu search",
+    "topic": "Algorithms",
+    "score": 66
+  },
+  {
+    "term": "Telegraph",
+    "topic": "Algorithms",
+    "score": 21
+  },
+  {
+    "term": "Teleprinter",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Tensor",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Tensor calculus",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Tensor software",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Thomas Hood",
+    "topic": "Algorithms",
+    "score": 107
+  },
+  {
+    "term": "Ticker tape",
+    "topic": "Algorithms",
+    "score": 36
+  },
+  {
+    "term": "Topological sorting",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Tree",
+    "topic": "Algorithms",
+    "score": 59
+  },
+  {
+    "term": "Trie",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Turing-complete",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Turing complete",
+    "topic": "Algorithms",
+    "score": 182
+  },
+  {
+    "term": "Turing machine",
+    "topic": "Algorithms",
+    "score": 103
+  },
+  {
+    "term": "Turing machines",
+    "topic": "Algorithms",
+    "score": 54
+  },
+  {
+    "term": "Unisys",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Validated numerics",
+    "topic": "Algorithms",
+    "score": 1
+  },
+  {
+    "term": "Vector calculus",
+    "topic": "Algorithms",
+    "score": 19
+  },
+  {
+    "term": "Verge escapement",
+    "topic": "Algorithms",
+    "score": 2
+  },
+  {
+    "term": "Volume",
+    "topic": "Algorithms",
+    "score": 135
+  },
+  {
+    "term": "Wikiversity",
+    "topic": "Algorithms",
+    "score": 0
+  },
+  {
+    "term": "Yuri Gurevich",
+    "topic": "Algorithms",
+    "score": 6
+  },
+  {
+    "term": "Zero",
+    "topic": "Algorithms",
+    "score": 24
+  },
+  {
+    "term": ".NET Framework",
+    "topic": "Data structures",
+    "score": 45
+  },
+  {
+    "term": "AA tree",
+    "topic": "Data structures",
+    "score": 60
+  },
+  {
+    "term": "AVL tree",
+    "topic": "Data structures",
+    "score": 59
+  },
+  {
+    "term": "Aggregate data",
+    "topic": "Data structures",
+    "score": 181
+  },
+  {
+    "term": "Aho\u2013Corasick algorithm",
+    "topic": "Data structures",
+    "score": 1
+  },
+  {
+    "term": "Apostolico\u2013Giancarlo algorithm",
+    "topic": "Data structures",
+    "score": 1
+  },
+  {
+    "term": "Arbitrary-precision arithmetic",
+    "topic": "Data structures",
+    "score": 8
+  },
+  {
+    "term": "Arithmetic operations",
+    "topic": "Data structures",
+    "score": 92
+  },
+  {
+    "term": "Association list",
+    "topic": "Data structures",
+    "score": 265
+  },
+  {
+    "term": "B-tree",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "BCPL",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "BLAST",
+    "topic": "Data structures",
+    "score": 15
+  },
+  {
+    "term": "Binary heap",
+    "topic": "Data structures",
+    "score": 14
+  },
+  {
+    "term": "Binary tree",
+    "topic": "Data structures",
+    "score": 59
+  },
+  {
+    "term": "Binomial heap",
+    "topic": "Data structures",
+    "score": 50
+  },
+  {
+    "term": "Bit",
+    "topic": "Data structures",
+    "score": 101
+  },
+  {
+    "term": "Bit array",
+    "topic": "Data structures",
+    "score": 112
+  },
+  {
+    "term": "Bitap algorithm",
+    "topic": "Data structures",
+    "score": 1
+  },
+  {
+    "term": "Bottom type",
+    "topic": "Data structures",
+    "score": 288
+  },
+  {
+    "term": "Boxing",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Boyer\u2013Moore\u2013Horspool algorithm",
+    "topic": "Data structures",
+    "score": 1
+  },
+  {
+    "term": "CRC Press",
+    "topic": "Data structures",
+    "score": 127
+  },
+  {
+    "term": "Circular buffer",
+    "topic": "Data structures",
+    "score": 37
+  },
+  {
+    "term": "Classes",
+    "topic": "Data structures",
+    "score": 85
+  },
+  {
+    "term": "Collection",
+    "topic": "Data structures",
+    "score": 84
+  },
+  {
+    "term": "Commentz-Walter algorithm",
+    "topic": "Data structures",
+    "score": 1
+  },
+  {
+    "term": "Computer",
+    "topic": "Data structures",
+    "score": 13
+  },
+  {
+    "term": "Conceptual schema",
+    "topic": "Data structures",
+    "score": 7
+  },
+  {
+    "term": "Container",
+    "topic": "Data structures",
+    "score": 10
+  },
+  {
+    "term": "Damerau\u2013Levenshtein distance",
+    "topic": "Data structures",
+    "score": 108
+  },
+  {
+    "term": "Data",
+    "topic": "Data structures",
+    "score": 173
+  },
+  {
+    "term": "Data-flow diagram",
+    "topic": "Data structures",
+    "score": 10
+  },
+  {
+    "term": "Data access",
+    "topic": "Data structures",
+    "score": 197
+  },
+  {
+    "term": "Data architecture",
+    "topic": "Data structures",
+    "score": 184
+  },
+  {
+    "term": "Database design",
+    "topic": "Data structures",
+    "score": 114
+  },
+  {
+    "term": "Database model",
+    "topic": "Data structures",
+    "score": 77
+  },
+  {
+    "term": "Dependent type",
+    "topic": "Data structures",
+    "score": 240
+  },
+  {
+    "term": "Double-ended queue",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Dynamic array",
+    "topic": "Data structures",
+    "score": 32
+  },
+  {
+    "term": "Dynamization",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Edit distance",
+    "topic": "Data structures",
+    "score": 110
+  },
+  {
+    "term": "Efficiency",
+    "topic": "Data structures",
+    "score": 50
+  },
+  {
+    "term": "Empty type",
+    "topic": "Data structures",
+    "score": 264
+  },
+  {
+    "term": "Enterprise modelling",
+    "topic": "Data structures",
+    "score": 31
+  },
+  {
+    "term": "Enumerated type",
+    "topic": "Data structures",
+    "score": 202
+  },
+  {
+    "term": "Extended precision",
+    "topic": "Data structures",
+    "score": 101
+  },
+  {
+    "term": "FM-index",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Fibonacci heap",
+    "topic": "Data structures",
+    "score": 14
+  },
+  {
+    "term": "Fixed-point arithmetic",
+    "topic": "Data structures",
+    "score": 8
+  },
+  {
+    "term": "Function type",
+    "topic": "Data structures",
+    "score": 313
+  },
+  {
+    "term": "Gaston Gonnet",
+    "topic": "Data structures",
+    "score": 2
+  },
+  {
+    "term": "Generic programming",
+    "topic": "Data structures",
+    "score": 5
+  },
+  {
+    "term": "Hamming distance",
+    "topic": "Data structures",
+    "score": 109
+  },
+  {
+    "term": "Hash tree",
+    "topic": "Data structures",
+    "score": 60
+  },
+  {
+    "term": "Hilbert R-tree",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Hirschberg's algorithm",
+    "topic": "Data structures",
+    "score": 1
+  },
+  {
+    "term": "Inductive type",
+    "topic": "Data structures",
+    "score": 200
+  },
+  {
+    "term": "Intersection type",
+    "topic": "Data structures",
+    "score": 217
+  },
+  {
+    "term": "Interval arithmetic",
+    "topic": "Data structures",
+    "score": 26
+  },
+  {
+    "term": "Jaro\u2013Winkler distance",
+    "topic": "Data structures",
+    "score": 108
+  },
+  {
+    "term": "Kind",
+    "topic": "Data structures",
+    "score": 313
+  },
+  {
+    "term": "Knuth\u2013Morris\u2013Pratt algorithm",
+    "topic": "Data structures",
+    "score": 1
+  },
+  {
+    "term": "LCP array",
+    "topic": "Data structures",
+    "score": 11
+  },
+  {
+    "term": "Lee distance",
+    "topic": "Data structures",
+    "score": 142
+  },
+  {
+    "term": "Levenshtein automaton",
+    "topic": "Data structures",
+    "score": 1
+  },
+  {
+    "term": "Levenshtein distance",
+    "topic": "Data structures",
+    "score": 108
+  },
+  {
+    "term": "Long double",
+    "topic": "Data structures",
+    "score": 808
+  },
+  {
+    "term": "MASM",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Main memory",
+    "topic": "Data structures",
+    "score": 195
+  },
+  {
+    "term": "Memory address",
+    "topic": "Data structures",
+    "score": 153
+  },
+  {
+    "term": "Metaclass",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Metaobject",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Minifloat",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Modular programming",
+    "topic": "Data structures",
+    "score": 9
+  },
+  {
+    "term": "Multimap",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Needleman\u2013Wunsch algorithm",
+    "topic": "Data structures",
+    "score": 1
+  },
+  {
+    "term": "Niklaus Wirth",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Null-terminated string",
+    "topic": "Data structures",
+    "score": 19
+  },
+  {
+    "term": "Object",
+    "topic": "Data structures",
+    "score": 65
+  },
+  {
+    "term": "Object\u2013role modeling",
+    "topic": "Data structures",
+    "score": 1
+  },
+  {
+    "term": "Operator",
+    "topic": "Data structures",
+    "score": 49
+  },
+  {
+    "term": "Option type",
+    "topic": "Data structures",
+    "score": 205
+  },
+  {
+    "term": "Parametric polymorphism",
+    "topic": "Data structures",
+    "score": 2
+  },
+  {
+    "term": "Parsing",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Pattern matching",
+    "topic": "Data structures",
+    "score": 146
+  },
+  {
+    "term": "Physical address",
+    "topic": "Data structures",
+    "score": 215
+  },
+  {
+    "term": "Physical schema",
+    "topic": "Data structures",
+    "score": 141
+  },
+  {
+    "term": "Plain text",
+    "topic": "Data structures",
+    "score": 108
+  },
+  {
+    "term": "Prentice Hall",
+    "topic": "Data structures",
+    "score": 152
+  },
+  {
+    "term": "Priority queue",
+    "topic": "Data structures",
+    "score": 18
+  },
+  {
+    "term": "Process modeling",
+    "topic": "Data structures",
+    "score": 197
+  },
+  {
+    "term": "Product type",
+    "topic": "Data structures",
+    "score": 287
+  },
+  {
+    "term": "Queap",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "R* tree",
+    "topic": "Data structures",
+    "score": 97
+  },
+  {
+    "term": "R+ tree",
+    "topic": "Data structures",
+    "score": 97
+  },
+  {
+    "term": "R-tree",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Rabin\u2013Karp algorithm",
+    "topic": "Data structures",
+    "score": 1
+  },
+  {
+    "term": "Raita algorithm",
+    "topic": "Data structures",
+    "score": 1
+  },
+  {
+    "term": "Random access",
+    "topic": "Data structures",
+    "score": 62
+  },
+  {
+    "term": "Red\u2013black tree",
+    "topic": "Data structures",
+    "score": 59
+  },
+  {
+    "term": "Reference",
+    "topic": "Data structures",
+    "score": 67
+  },
+  {
+    "term": "Refinement type",
+    "topic": "Data structures",
+    "score": 205
+  },
+  {
+    "term": "Regular grammar",
+    "topic": "Data structures",
+    "score": 87
+  },
+  {
+    "term": "Ricardo Baeza-Yates",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Rope",
+    "topic": "Data structures",
+    "score": 15
+  },
+  {
+    "term": "Sartaj Sahni",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Semi-Thue system",
+    "topic": "Data structures",
+    "score": 416
+  },
+  {
+    "term": "Sequence alignment",
+    "topic": "Data structures",
+    "score": 39
+  },
+  {
+    "term": "Set",
+    "topic": "Data structures",
+    "score": 414
+  },
+  {
+    "term": "Signedness",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Skip list",
+    "topic": "Data structures",
+    "score": 138
+  },
+  {
+    "term": "Smith\u2013Waterman algorithm",
+    "topic": "Data structures",
+    "score": 1
+  },
+  {
+    "term": "Sparse matrix",
+    "topic": "Data structures",
+    "score": 6
+  },
+  {
+    "term": "Splay tree",
+    "topic": "Data structures",
+    "score": 59
+  },
+  {
+    "term": "Stream",
+    "topic": "Data structures",
+    "score": 51
+  },
+  {
+    "term": "String metric",
+    "topic": "Data structures",
+    "score": 19
+  },
+  {
+    "term": "String operations",
+    "topic": "Data structures",
+    "score": 103
+  },
+  {
+    "term": "Substring index",
+    "topic": "Data structures",
+    "score": 81
+  },
+  {
+    "term": "Subtyping",
+    "topic": "Data structures",
+    "score": 0
+  },
+  {
+    "term": "Suffix array",
+    "topic": "Data structures",
+    "score": 12
+  },
+  {
+    "term": "Suffix automaton",
+    "topic": "Data structures",
+    "score": 2
+  },
+  {
+    "term": "Suffix tree",
+    "topic": "Data structures",
+    "score": 60
+  },
+  {
+    "term": "Tagged union",
+    "topic": "Data structures",
+    "score": 188
+  },
+  {
+    "term": "Thompson's construction",
+    "topic": "Data structures",
+    "score": 95
+  },
+  {
+    "term": "Top type",
+    "topic": "Data structures",
+    "score": 404
+  },
+  {
+    "term": "Trigram search",
+    "topic": "Data structures",
+    "score": 66
+  },
+  {
+    "term": "Type class",
+    "topic": "Data structures",
+    "score": 407
+  },
+  {
+    "term": "Type constructor",
+    "topic": "Data structures",
+    "score": 200
+  },
+  {
+    "term": "Unit type",
+    "topic": "Data structures",
+    "score": 303
+  },
+  {
+    "term": "Variable",
+    "topic": "Data structures",
+    "score": 36
+  },
+  {
+    "term": "Void type",
+    "topic": "Data structures",
+    "score": 210
+  },
+  {
+    "term": "Wagner\u2013Fischer algorithm",
+    "topic": "Data structures",
+    "score": 1
+  },
+  {
+    "term": "Word",
+    "topic": "Data structures",
+    "score": 274
+  },
+  {
+    "term": "Wrox Press",
+    "topic": "Data structures",
+    "score": 127
+  },
+  {
+    "term": "XML schema",
+    "topic": "Data structures",
+    "score": 3
+  },
+  {
+    "term": ".design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Active design",
+    "topic": "Design patterns",
+    "score": 202
+  },
+  {
+    "term": "Activity-centered design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Advertising",
+    "topic": "Design patterns",
+    "score": 50
+  },
+  {
+    "term": "Affective design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Algorithms-Aided Design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Anti-pattern",
+    "topic": "Design patterns",
+    "score": 0
+  },
+  {
+    "term": "Applied arts",
+    "topic": "Design patterns",
+    "score": 172
+  },
+  {
+    "term": "Architect-led design\u2013build",
+    "topic": "Design patterns",
+    "score": 0
+  },
+  {
+    "term": "Architectural model",
+    "topic": "Design patterns",
+    "score": 85
+  },
+  {
+    "term": "Architectural pattern",
+    "topic": "Design patterns",
+    "score": 121
+  },
+  {
+    "term": "Architecture",
+    "topic": "Design patterns",
+    "score": 11
+  },
+  {
+    "term": "Automotive design",
+    "topic": "Design patterns",
+    "score": 122
+  },
+  {
+    "term": "Behavioural design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Blueprint",
+    "topic": "Design patterns",
+    "score": 1
+  },
+  {
+    "term": "Boiler design",
+    "topic": "Design patterns",
+    "score": 116
+  },
+  {
+    "term": "Book design",
+    "topic": "Design patterns",
+    "score": 311
+  },
+  {
+    "term": "Brainstorming",
+    "topic": "Design patterns",
+    "score": 0
+  },
+  {
+    "term": "Building design",
+    "topic": "Design patterns",
+    "score": 274
+  },
+  {
+    "term": "Business model",
+    "topic": "Design patterns",
+    "score": 470
+  },
+  {
+    "term": "C-K theory",
+    "topic": "Design patterns",
+    "score": 129
+  },
+  {
+    "term": "CMF design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Ceramic art",
+    "topic": "Design patterns",
+    "score": 217
+  },
+  {
+    "term": "Christopher Alexander",
+    "topic": "Design patterns",
+    "score": 50
+  },
+  {
+    "term": "Circuit design",
+    "topic": "Design patterns",
+    "score": 137
+  },
+  {
+    "term": "Clean-room design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Communication design",
+    "topic": "Design patterns",
+    "score": 181
+  },
+  {
+    "term": "Community design",
+    "topic": "Design patterns",
+    "score": 345
+  },
+  {
+    "term": "Comprehensive layout",
+    "topic": "Design patterns",
+    "score": 25
+  },
+  {
+    "term": "Computer-aided design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Computer-automated design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Concept art",
+    "topic": "Design patterns",
+    "score": 293
+  },
+  {
+    "term": "Conceptual design",
+    "topic": "Design patterns",
+    "score": 118
+  },
+  {
+    "term": "Configuration design",
+    "topic": "Design patterns",
+    "score": 121
+  },
+  {
+    "term": "Contextual design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Continuous design",
+    "topic": "Design patterns",
+    "score": 158
+  },
+  {
+    "term": "Costume design",
+    "topic": "Design patterns",
+    "score": 124
+  },
+  {
+    "term": "Cradle-to-cradle design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Creative industries",
+    "topic": "Design patterns",
+    "score": 85
+  },
+  {
+    "term": "Creative problem-solving",
+    "topic": "Design patterns",
+    "score": 49
+  },
+  {
+    "term": "Creativity techniques",
+    "topic": "Design patterns",
+    "score": 108
+  },
+  {
+    "term": "Critical design",
+    "topic": "Design patterns",
+    "score": 172
+  },
+  {
+    "term": "Cultural icon",
+    "topic": "Design patterns",
+    "score": 55
+  },
+  {
+    "term": "Dark pattern",
+    "topic": "Design patterns",
+    "score": 298
+  },
+  {
+    "term": "Defensive design",
+    "topic": "Design patterns",
+    "score": 131
+  },
+  {
+    "term": "Design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Design Council",
+    "topic": "Design patterns",
+    "score": 217
+  },
+  {
+    "term": "Design Patterns",
+    "topic": "Design patterns",
+    "score": 161
+  },
+  {
+    "term": "Design around",
+    "topic": "Design patterns",
+    "score": 676
+  },
+  {
+    "term": "Design brief",
+    "topic": "Design patterns",
+    "score": 187
+  },
+  {
+    "term": "Design change",
+    "topic": "Design patterns",
+    "score": 354
+  },
+  {
+    "term": "Design choice",
+    "topic": "Design patterns",
+    "score": 227
+  },
+  {
+    "term": "Design classic",
+    "topic": "Design patterns",
+    "score": 150
+  },
+  {
+    "term": "Design closure",
+    "topic": "Design patterns",
+    "score": 115
+  },
+  {
+    "term": "Design competition",
+    "topic": "Design patterns",
+    "score": 177
+  },
+  {
+    "term": "Design computing",
+    "topic": "Design patterns",
+    "score": 125
+  },
+  {
+    "term": "Design controls",
+    "topic": "Design patterns",
+    "score": 144
+  },
+  {
+    "term": "Design culture",
+    "topic": "Design patterns",
+    "score": 172
+  },
+  {
+    "term": "Design director",
+    "topic": "Design patterns",
+    "score": 215
+  },
+  {
+    "term": "Design education",
+    "topic": "Design patterns",
+    "score": 328
+  },
+  {
+    "term": "Design elements",
+    "topic": "Design patterns",
+    "score": 221
+  },
+  {
+    "term": "Design fiction",
+    "topic": "Design patterns",
+    "score": 160
+  },
+  {
+    "term": "Design firm",
+    "topic": "Design patterns",
+    "score": 223
+  },
+  {
+    "term": "Design flow",
+    "topic": "Design patterns",
+    "score": 182
+  },
+  {
+    "term": "Design history",
+    "topic": "Design patterns",
+    "score": 400
+  },
+  {
+    "term": "Design infringement",
+    "topic": "Design patterns",
+    "score": 121
+  },
+  {
+    "term": "Design justice",
+    "topic": "Design patterns",
+    "score": 228
+  },
+  {
+    "term": "Design knowledge",
+    "topic": "Design patterns",
+    "score": 259
+  },
+  {
+    "term": "Design language",
+    "topic": "Design patterns",
+    "score": 223
+  },
+  {
+    "term": "Design leadership",
+    "topic": "Design patterns",
+    "score": 206
+  },
+  {
+    "term": "Design life",
+    "topic": "Design patterns",
+    "score": 829
+  },
+  {
+    "term": "Design load",
+    "topic": "Design patterns",
+    "score": 159
+  },
+  {
+    "term": "Design management",
+    "topic": "Design patterns",
+    "score": 205
+  },
+  {
+    "term": "Design marker",
+    "topic": "Design patterns",
+    "score": 119
+  },
+  {
+    "term": "Design methods",
+    "topic": "Design patterns",
+    "score": 256
+  },
+  {
+    "term": "Design museum",
+    "topic": "Design patterns",
+    "score": 146
+  },
+  {
+    "term": "Design optimization",
+    "topic": "Design patterns",
+    "score": 115
+  },
+  {
+    "term": "Design paradigm",
+    "topic": "Design patterns",
+    "score": 120
+  },
+  {
+    "term": "Design patent",
+    "topic": "Design patterns",
+    "score": 149
+  },
+  {
+    "term": "Design principles",
+    "topic": "Design patterns",
+    "score": 185
+  },
+  {
+    "term": "Design rationale",
+    "topic": "Design patterns",
+    "score": 120
+  },
+  {
+    "term": "Design research",
+    "topic": "Design patterns",
+    "score": 285
+  },
+  {
+    "term": "Design science",
+    "topic": "Design patterns",
+    "score": 245
+  },
+  {
+    "term": "Design specification",
+    "topic": "Design patterns",
+    "score": 117
+  },
+  {
+    "term": "Design sprint",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Design strategy",
+    "topic": "Design patterns",
+    "score": 136
+  },
+  {
+    "term": "Design studies",
+    "topic": "Design patterns",
+    "score": 217
+  },
+  {
+    "term": "Design studio",
+    "topic": "Design patterns",
+    "score": 145
+  },
+  {
+    "term": "Design system",
+    "topic": "Design patterns",
+    "score": 530
+  },
+  {
+    "term": "Design technology",
+    "topic": "Design patterns",
+    "score": 157
+  },
+  {
+    "term": "Design theory",
+    "topic": "Design patterns",
+    "score": 243
+  },
+  {
+    "term": "Design thinking",
+    "topic": "Design patterns",
+    "score": 259
+  },
+  {
+    "term": "Design tool",
+    "topic": "Design patterns",
+    "score": 154
+  },
+  {
+    "term": "Designer",
+    "topic": "Design patterns",
+    "score": 18
+  },
+  {
+    "term": "Design\u2013bid\u2013build",
+    "topic": "Design patterns",
+    "score": 0
+  },
+  {
+    "term": "Design\u2013build",
+    "topic": "Design patterns",
+    "score": 0
+  },
+  {
+    "term": "Diffuse design",
+    "topic": "Design patterns",
+    "score": 118
+  },
+  {
+    "term": "Dominant design",
+    "topic": "Design patterns",
+    "score": 179
+  },
+  {
+    "term": "Drug design",
+    "topic": "Design patterns",
+    "score": 138
+  },
+  {
+    "term": "Ecological design",
+    "topic": "Design patterns",
+    "score": 116
+  },
+  {
+    "term": "Empathic design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Environmental design",
+    "topic": "Design patterns",
+    "score": 121
+  },
+  {
+    "term": "Ergonomic design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Error-tolerant design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Evidence-based design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Exhibit design",
+    "topic": "Design patterns",
+    "score": 139
+  },
+  {
+    "term": "Experience design",
+    "topic": "Design patterns",
+    "score": 390
+  },
+  {
+    "term": "Fashion design",
+    "topic": "Design patterns",
+    "score": 183
+  },
+  {
+    "term": "Fault-tolerant design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Feminist design",
+    "topic": "Design patterns",
+    "score": 115
+  },
+  {
+    "term": "Filter design",
+    "topic": "Design patterns",
+    "score": 123
+  },
+  {
+    "term": "Floral design",
+    "topic": "Design patterns",
+    "score": 117
+  },
+  {
+    "term": "Framework-oriented design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Functional design",
+    "topic": "Design patterns",
+    "score": 138
+  },
+  {
+    "term": "Furniture",
+    "topic": "Design patterns",
+    "score": 39
+  },
+  {
+    "term": "Futures studies",
+    "topic": "Design patterns",
+    "score": 103
+  },
+  {
+    "term": "Game design",
+    "topic": "Design patterns",
+    "score": 237
+  },
+  {
+    "term": "Garden design",
+    "topic": "Design patterns",
+    "score": 174
+  },
+  {
+    "term": "Generative design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Geodesign",
+    "topic": "Design patterns",
+    "score": 0
+  },
+  {
+    "term": "Geometric design",
+    "topic": "Design patterns",
+    "score": 131
+  },
+  {
+    "term": "Geschmacksmuster",
+    "topic": "Design patterns",
+    "score": 0
+  },
+  {
+    "term": "Glass art",
+    "topic": "Design patterns",
+    "score": 307
+  },
+  {
+    "term": "Graphex",
+    "topic": "Design patterns",
+    "score": 0
+  },
+  {
+    "term": "Graphic design",
+    "topic": "Design patterns",
+    "score": 120
+  },
+  {
+    "term": "HTML editor",
+    "topic": "Design patterns",
+    "score": 77
+  },
+  {
+    "term": "Hostile design",
+    "topic": "Design patterns",
+    "score": 133
+  },
+  {
+    "term": "Hotel design",
+    "topic": "Design patterns",
+    "score": 240
+  },
+  {
+    "term": "Human-centered design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Icon design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Illustration",
+    "topic": "Design patterns",
+    "score": 23
+  },
+  {
+    "term": "Immersive design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Inclusive design",
+    "topic": "Design patterns",
+    "score": 118
+  },
+  {
+    "term": "Indie design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Industrial design",
+    "topic": "Design patterns",
+    "score": 257
+  },
+  {
+    "term": "Information design",
+    "topic": "Design patterns",
+    "score": 383
+  },
+  {
+    "term": "Innovation management",
+    "topic": "Design patterns",
+    "score": 98
+  },
+  {
+    "term": "Instructional design",
+    "topic": "Design patterns",
+    "score": 117
+  },
+  {
+    "term": "Integrated design",
+    "topic": "Design patterns",
+    "score": 125
+  },
+  {
+    "term": "Intelligence-based design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Intelligent design",
+    "topic": "Design patterns",
+    "score": 140
+  },
+  {
+    "term": "Interactive design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Interior architecture",
+    "topic": "Design patterns",
+    "score": 85
+  },
+  {
+    "term": "Interior design",
+    "topic": "Design patterns",
+    "score": 188
+  },
+  {
+    "term": "Iterative design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Jewellery design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "KISS principle",
+    "topic": "Design patterns",
+    "score": 126
+  },
+  {
+    "term": "Kevlin Henney",
+    "topic": "Design patterns",
+    "score": 0
+  },
+  {
+    "term": "Keyline design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Landscape architecture",
+    "topic": "Design patterns",
+    "score": 31
+  },
+  {
+    "term": "Landscape design",
+    "topic": "Design patterns",
+    "score": 134
+  },
+  {
+    "term": "Lean startup",
+    "topic": "Design patterns",
+    "score": 20
+  },
+  {
+    "term": "Level",
+    "topic": "Design patterns",
+    "score": 213
+  },
+  {
+    "term": "Lighting design",
+    "topic": "Design patterns",
+    "score": 137
+  },
+  {
+    "term": "Low-level design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Metadesign",
+    "topic": "Design patterns",
+    "score": 0
+  },
+  {
+    "term": "Mind map",
+    "topic": "Design patterns",
+    "score": 338
+  },
+  {
+    "term": "Mockup",
+    "topic": "Design patterns",
+    "score": 0
+  },
+  {
+    "term": "Modular design",
+    "topic": "Design patterns",
+    "score": 118
+  },
+  {
+    "term": "Motorcycle design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "New Wave",
+    "topic": "Design patterns",
+    "score": 1681
+  },
+  {
+    "term": "News design",
+    "topic": "Design patterns",
+    "score": 216
+  },
+  {
+    "term": "O'Reilly Media",
+    "topic": "Design patterns",
+    "score": 13
+  },
+  {
+    "term": "OODA loop",
+    "topic": "Design patterns",
+    "score": 21
+  },
+  {
+    "term": "Object-oriented design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Open-design movement",
+    "topic": "Design patterns",
+    "score": 128
+  },
+  {
+    "term": "Opinion poll",
+    "topic": "Design patterns",
+    "score": 105
+  },
+  {
+    "term": "Organizational architecture",
+    "topic": "Design patterns",
+    "score": 16
+  },
+  {
+    "term": "Overengineering",
+    "topic": "Design patterns",
+    "score": 0
+  },
+  {
+    "term": "Parametric design",
+    "topic": "Design patterns",
+    "score": 116
+  },
+  {
+    "term": "Participatory design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Pattern gardening",
+    "topic": "Design patterns",
+    "score": 116
+  },
+  {
+    "term": "Pattern language",
+    "topic": "Design patterns",
+    "score": 222
+  },
+  {
+    "term": "Pedagogical patterns",
+    "topic": "Design patterns",
+    "score": 48
+  },
+  {
+    "term": "Photography",
+    "topic": "Design patterns",
+    "score": 7
+  },
+  {
+    "term": "Physical design",
+    "topic": "Design patterns",
+    "score": 252
+  },
+  {
+    "term": "Platform-based design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Policy-based design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Print design",
+    "topic": "Design patterns",
+    "score": 132
+  },
+  {
+    "term": "Probabilistic design",
+    "topic": "Design patterns",
+    "score": 115
+  },
+  {
+    "term": "Process-centered design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Process design",
+    "topic": "Design patterns",
+    "score": 310
+  },
+  {
+    "term": "Process simulation",
+    "topic": "Design patterns",
+    "score": 198
+  },
+  {
+    "term": "Processor design",
+    "topic": "Design patterns",
+    "score": 118
+  },
+  {
+    "term": "Product design",
+    "topic": "Design patterns",
+    "score": 201
+  },
+  {
+    "term": "Production designer",
+    "topic": "Design patterns",
+    "score": 166
+  },
+  {
+    "term": "Property designer",
+    "topic": "Design patterns",
+    "score": 174
+  },
+  {
+    "term": "Protein design",
+    "topic": "Design patterns",
+    "score": 135
+  },
+  {
+    "term": "Prototype",
+    "topic": "Design patterns",
+    "score": 3
+  },
+  {
+    "term": "Public art",
+    "topic": "Design patterns",
+    "score": 646
+  },
+  {
+    "term": "Public opinion",
+    "topic": "Design patterns",
+    "score": 534
+  },
+  {
+    "term": "Rational design",
+    "topic": "Design patterns",
+    "score": 139
+  },
+  {
+    "term": "Reference design",
+    "topic": "Design patterns",
+    "score": 181
+  },
+  {
+    "term": "Regenerative design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Research-based design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Research design",
+    "topic": "Design patterns",
+    "score": 285
+  },
+  {
+    "term": "Responsibility-driven design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Retail design",
+    "topic": "Design patterns",
+    "score": 134
+  },
+  {
+    "term": "STEAM fields",
+    "topic": "Design patterns",
+    "score": 89
+  },
+  {
+    "term": "Safe-life design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Scenic design",
+    "topic": "Design patterns",
+    "score": 123
+  },
+  {
+    "term": "Sensory design",
+    "topic": "Design patterns",
+    "score": 123
+  },
+  {
+    "term": "Service design",
+    "topic": "Design patterns",
+    "score": 429
+  },
+  {
+    "term": "Signage",
+    "topic": "Design patterns",
+    "score": 0
+  },
+  {
+    "term": "Sketch",
+    "topic": "Design patterns",
+    "score": 16
+  },
+  {
+    "term": "Slow design",
+    "topic": "Design patterns",
+    "score": 174
+  },
+  {
+    "term": "Social design",
+    "topic": "Design patterns",
+    "score": 494
+  },
+  {
+    "term": "Sound design",
+    "topic": "Design patterns",
+    "score": 318
+  },
+  {
+    "term": "Spacecraft design",
+    "topic": "Design patterns",
+    "score": 117
+  },
+  {
+    "term": "Spatial design",
+    "topic": "Design patterns",
+    "score": 124
+  },
+  {
+    "term": "Speculative design",
+    "topic": "Design patterns",
+    "score": 122
+  },
+  {
+    "term": "Storyboard",
+    "topic": "Design patterns",
+    "score": 0
+  },
+  {
+    "term": "Strategic design",
+    "topic": "Design patterns",
+    "score": 137
+  },
+  {
+    "term": "Style guide",
+    "topic": "Design patterns",
+    "score": 134
+  },
+  {
+    "term": "Sustainable design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Systemic design",
+    "topic": "Design patterns",
+    "score": 117
+  },
+  {
+    "term": "Systems-oriented design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "TRIZ",
+    "topic": "Design patterns",
+    "score": 0
+  },
+  {
+    "term": "Technical drawing",
+    "topic": "Design patterns",
+    "score": 160
+  },
+  {
+    "term": "Test design",
+    "topic": "Design patterns",
+    "score": 233
+  },
+  {
+    "term": "Textile design",
+    "topic": "Design patterns",
+    "score": 142
+  },
+  {
+    "term": "Thomas Erl",
+    "topic": "Design patterns",
+    "score": 100
+  },
+  {
+    "term": "Transformation design",
+    "topic": "Design patterns",
+    "score": 134
+  },
+  {
+    "term": "Transgenerational design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Type design",
+    "topic": "Design patterns",
+    "score": 314
+  },
+  {
+    "term": "Typography",
+    "topic": "Design patterns",
+    "score": 3
+  },
+  {
+    "term": "Universal design",
+    "topic": "Design patterns",
+    "score": 159
+  },
+  {
+    "term": "Urban design",
+    "topic": "Design patterns",
+    "score": 156
+  },
+  {
+    "term": "Usage-centered design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Use-centered design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "User-centered design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "User innovation",
+    "topic": "Design patterns",
+    "score": 11
+  },
+  {
+    "term": "Value-driven design",
+    "topic": "Design patterns",
+    "score": 114
+  },
+  {
+    "term": "Video design",
+    "topic": "Design patterns",
+    "score": 116
+  },
+  {
+    "term": "Visual merchandising",
+    "topic": "Design patterns",
+    "score": 48
+  },
+  {
+    "term": "Web design",
+    "topic": "Design patterns",
+    "score": 120
+  },
+  {
+    "term": "Website wireframe",
+    "topic": "Design patterns",
+    "score": 0
+  },
+  {
+    "term": "Wicked problem",
+    "topic": "Design patterns",
+    "score": 322
+  },
+  {
+    "term": "Wolfgang Pree",
+    "topic": "Design patterns",
+    "score": 1
+  },
+  {
+    "term": "Work design",
+    "topic": "Design patterns",
+    "score": 876
+  }
+];
+
+    // Display term count
+    document.getElementById('term-count').textContent = termsDatabase.length;
+
+    // Weighted random selection using log scaling (similar to Python version)
+    function weightedReroll(n = 5) {
+      // Calculate weights using log scaling
+      const weights = termsDatabase.map(term => Math.log(term.score + 2));
+      const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+      
+      const choices = [];
+      for (let i = 0; i < n; i++) {
+        let random = Math.random() * totalWeight;
+        let weightSum = 0;
+        
+        for (let j = 0; j < termsDatabase.length; j++) {
+          weightSum += weights[j];
+          if (random <= weightSum) {
+            choices.push(termsDatabase[j]);
+            break;
+          }
+        }
+      }
+      
+      return choices.map(term => ({ term: term.term }));
+    }
+
+    function fetchWords() {
+      const words = weightedReroll();
+      const list = document.getElementById("word-list");
+      list.innerHTML = "";
+      
+      words.forEach(w => {
+        const li = document.createElement("li");
+        li.textContent = w.term;
+        list.appendChild(li);
+      });
+    }
+
+    // Load initial words when page loads
+    window.addEventListener('load', fetchWords);
+  </script>
+</body>
+</html>
